@@ -28,13 +28,16 @@ public class JoinEntry {
 
 
     /** 左表 */
-    private String tableLeft;
+    private final String tableLeft;
 
-    private String columnLeft;
+    /** 左列 */
+    private final String columnLeft;
 
-    private String tableRight;
+    /** 右表 */
+    private final String tableRight;
 
-    private String columnRight;
+    /** 右列 */
+    private final String columnRight;
 
     public JoinEntry(String tableLeft, String columnLeft, String tableRight, String columnRight) {
         this.tableLeft = tableLeft;
