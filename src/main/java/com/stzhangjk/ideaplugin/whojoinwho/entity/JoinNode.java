@@ -1,7 +1,6 @@
 package com.stzhangjk.ideaplugin.whojoinwho.entity;
 
 import com.stzhangjk.ideaplugin.whojoinwho.enums.SubType;
-import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 
 import java.util.ArrayList;
 import java.util.List;
