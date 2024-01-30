@@ -7,6 +7,7 @@ import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
 import guru.nidi.graphviz.model.MutableGraph;
 import guru.nidi.graphviz.model.MutableNode;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +19,7 @@ import static guru.nidi.graphviz.model.Factory.mutNode;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
+@Slf4j
 public class GraphvizUtil {
 
     private static final String fontname = "Microsoft YaHei UI";
@@ -61,7 +63,7 @@ public class GraphvizUtil {
         }
         g.add(nodes.values().toArray(new MutableNode[0]));
 
-        System.out.println(outputFile);
+        log.debug("outputFile = {}", outputFile.getPath());
         Graphviz.fromGraph(g)
                 .engine(Engine.NEATO)
                 .notValidating()

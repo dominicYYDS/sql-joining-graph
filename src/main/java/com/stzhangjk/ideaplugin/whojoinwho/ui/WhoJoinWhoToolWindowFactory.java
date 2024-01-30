@@ -20,7 +20,6 @@ public class WhoJoinWhoToolWindowFactory implements ToolWindowFactory {
 
         Content content = toolWindow.getContentManager().getFactory().createContent(whole, null, true);
         toolWindow.getContentManager().addContent(content);
-        System.out.println(toolWindow.getContentManager().getContentCount());
 
     }
 
