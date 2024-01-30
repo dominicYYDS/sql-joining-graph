@@ -1,10 +1,8 @@
 package com.stzhangjk.ideaplugin.whojoinwho.entity;
 
-import guru.nidi.graphviz.engine.Engine;
-
 import java.util.Map;
 
-public class WhoJoinWhoConfiguration {
+public class WhoJoinWhoSettings {
 
     private Map<String, String> graphAttrs;
 
@@ -18,7 +16,7 @@ public class WhoJoinWhoConfiguration {
         return graphAttrs;
     }
 
-    public WhoJoinWhoConfiguration setGraphAttrs(Map<String, String> graphAttrs) {
+    public WhoJoinWhoSettings setGraphAttrs(Map<String, String> graphAttrs) {
         this.graphAttrs = graphAttrs;
         return this;
     }
@@ -27,7 +25,7 @@ public class WhoJoinWhoConfiguration {
         return edgeAttrs;
     }
 
-    public WhoJoinWhoConfiguration setEdgeAttrs(Map<String, String> edgeAttrs) {
+    public WhoJoinWhoSettings setEdgeAttrs(Map<String, String> edgeAttrs) {
         this.edgeAttrs = edgeAttrs;
         return this;
     }
@@ -36,7 +34,7 @@ public class WhoJoinWhoConfiguration {
         return nodeAttrs;
     }
 
-    public WhoJoinWhoConfiguration setNodeAttrs(Map<String, String> nodeAttrs) {
+    public WhoJoinWhoSettings setNodeAttrs(Map<String, String> nodeAttrs) {
         this.nodeAttrs = nodeAttrs;
         return this;
     }
@@ -45,7 +43,7 @@ public class WhoJoinWhoConfiguration {
         return engine;
     }
 
-    public WhoJoinWhoConfiguration setEngine(String engine) {
+    public WhoJoinWhoSettings setEngine(String engine) {
         this.engine = engine;
         return this;
     }

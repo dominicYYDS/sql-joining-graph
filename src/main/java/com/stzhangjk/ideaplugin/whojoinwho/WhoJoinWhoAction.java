@@ -5,18 +5,12 @@ import ch.tools.intellij.psi.PsiTools;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
-import com.intellij.ui.components.panels.VerticalLayout;
-import com.intellij.ui.content.Content;
 import com.stzhangjk.ideaplugin.whojoinwho.entity.JoinEntry;
-import com.stzhangjk.ideaplugin.whojoinwho.ui.GraphvizPropertyPanel;
 import com.stzhangjk.ideaplugin.whojoinwho.utils.ExtractUtil;
 import com.stzhangjk.ideaplugin.whojoinwho.utils.GraphvizUtil;
 import net.sf.jsqlparser.JSQLParserException;
@@ -25,28 +19,13 @@ import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.Select;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class WhoJoinWhoAction extends AnAction implements ToolWindowFactory {
+public class WhoJoinWhoAction extends AnAction {
 
-    private GraphvizPropertyPanel propertyPanel;
-
-    @Override
-    public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
-
-        VerticalLayout layout = new VerticalLayout(10);
-        JPanel whole = new JPanel(layout);
-        whole.add(new GraphvizPropertyPanel());
-
-        Content content = toolWindow.getContentManager().getFactory().createContent(whole, null, true);
-        toolWindow.getContentManager().addContent(content);
-        System.out.println(toolWindow.getContentManager().getContentCount());
-
-    }
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent event) {

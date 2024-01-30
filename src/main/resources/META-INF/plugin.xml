@@ -27,21 +27,16 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
-        <toolWindow id="who-join-who" anchor="right" factoryClass="com.stzhangjk.ideaplugin.whojoinwho.WhoJoinWhoAction" />
+
+        <toolWindow id="who-join-who" anchor="right" factoryClass="com.stzhangjk.ideaplugin.whojoinwho.ui.WhoJoinWhoToolWindowFactory" />
+
+        <projectService serviceImplementation="com.stzhangjk.ideaplugin.whojoinwho.service.WhoJoinWhoSettingsService"/>
     </extensions>
 
     <actions>
         <!-- Add your actions here -->
-        <action
-                id="com.stzhangjk.ideaplugin.whojoinwho.WhoJoinWhoAction"
-                class="com.stzhangjk.ideaplugin.whojoinwho.WhoJoinWhoAction"
-                text="WhoJoinWhoAction"
-                description="WhoJoinWho">
-            <add-to-group group-id="ToolsMenu" anchor="first"/>
-        </action>
-
         <action class="com.stzhangjk.ideaplugin.whojoinwho.WhoJoinWhoAction"
-                text="WhoJoinWho2">
+                text="WhoJoinWho">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="AnalyzeMenu"/>
         </action>
     </actions>
