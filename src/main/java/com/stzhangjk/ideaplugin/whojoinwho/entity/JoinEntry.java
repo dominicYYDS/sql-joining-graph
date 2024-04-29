@@ -4,27 +4,10 @@ import java.util.Comparator;
 
 public class JoinEntry {
 
-    public static final Comparator<JoinEntry> COMPARATOR = (e1, e2) -> {
-        int r1 = JoinEntry.c1.compare(e1, e2);
-        return r1 == 0 ? 0 : JoinEntry.c2.compare(e1, e2);
-    };
-
-    private static final Comparator<JoinEntry> c1 = Comparator.comparing(JoinEntry::getTableLeft)
+    public static final Comparator<JoinEntry> COMPARATOR = Comparator.comparing(JoinEntry::getTableLeft)
             .thenComparing(JoinEntry::getColumnLeft)
             .thenComparing(JoinEntry::getTableRight)
             .thenComparing(JoinEntry::getColumnRight);
-
-    private static final Comparator<JoinEntry> c2 = (e1, e2) -> {
-        String s1 = e1.getTableLeft()
-                .concat(e1.getColumnLeft())
-                .concat(e1.getTableRight())
-                .concat(e1.getColumnRight());
-        String s2 = e2.getTableRight()
-                .concat(e2.getColumnRight())
-                .concat(e2.getTableLeft())
-                .concat(e2.getColumnLeft());
-        return s1.compareTo(s2);
-    };
 
 
     /** 左表 */
@@ -40,10 +23,18 @@ public class JoinEntry {
     private final String columnRight;
 
     public JoinEntry(String tableLeft, String columnLeft, String tableRight, String columnRight) {
-        this.tableLeft = tableLeft;
-        this.columnLeft = columnLeft;
-        this.tableRight = tableRight;
-        this.columnRight = columnRight;
+        //字母顺序小的放左边
+        if (tableLeft.concat(columnLeft).compareTo(tableRight.concat(columnRight)) <= 0) {
+            this.tableLeft = tableLeft;
+            this.columnLeft = columnLeft;
+            this.tableRight = tableRight;
+            this.columnRight = columnRight;
+        } else {
+            this.tableLeft = tableRight;
+            this.columnLeft = columnRight;
+            this.tableRight = tableLeft;
+            this.columnRight = columnLeft;
+        }
     }
 
     public String getTableLeft() {
