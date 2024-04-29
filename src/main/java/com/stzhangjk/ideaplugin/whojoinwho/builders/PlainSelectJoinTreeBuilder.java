@@ -1,10 +1,10 @@
 package com.stzhangjk.ideaplugin.whojoinwho.builders;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.stzhangjk.ideaplugin.whojoinwho.entity.JoinNode;
 import com.stzhangjk.ideaplugin.whojoinwho.entity.JoinSelect;
 import com.stzhangjk.ideaplugin.whojoinwho.entity.JoinTable;
 import com.stzhangjk.ideaplugin.whojoinwho.enums.SubType;
-import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.expression.ExpressionVisitorAdapter;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.schema.Column;
@@ -13,8 +13,9 @@ import net.sf.jsqlparser.statement.select.*;
 
 import java.util.stream.Collectors;
 
-@Slf4j
 public class PlainSelectJoinTreeBuilder implements JoinTreeBuilder<PlainSelect> {
+
+    private static final Logger log = Logger.getInstance(PlainSelectJoinTreeBuilder.class);
 
     public static final PlainSelectJoinTreeBuilder INSTANCE = new PlainSelectJoinTreeBuilder();
 
@@ -52,7 +53,7 @@ public class PlainSelectJoinTreeBuilder implements JoinTreeBuilder<PlainSelect> 
                 } else if (join.getRightItem() instanceof SubSelect) {
                     child = SelectBodyJoinTreeBuilder.INSTANCE.build(((SubSelect) join.getRightItem()).getSelectBody());
                 } else {
-                    log.debug("join类型不支持 - {}", join.getRightItem().getClass().getSimpleName());
+                    log.debug(String.format("join类型不支持：[%s]", join.getRightItem().getClass().getSimpleName()));
                     continue;
                 }
                 if (child != null) {

@@ -1,13 +1,16 @@
 package com.stzhangjk.ideaplugin.whojoinwho.utils;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.stzhangjk.ideaplugin.whojoinwho.entity.JoinEntry;
-import guru.nidi.graphviz.attribute.*;
+import guru.nidi.graphviz.attribute.Font;
+import guru.nidi.graphviz.attribute.Rank;
+import guru.nidi.graphviz.attribute.Records;
+import guru.nidi.graphviz.attribute.Shape;
 import guru.nidi.graphviz.engine.Engine;
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
 import guru.nidi.graphviz.model.MutableGraph;
 import guru.nidi.graphviz.model.MutableNode;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,8 +22,9 @@ import static guru.nidi.graphviz.model.Factory.mutNode;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
-@Slf4j
 public class GraphvizUtil {
+
+    private static final Logger log = Logger.getInstance(GraphvizUtil.class);
 
     private static final String fontname = "Microsoft YaHei UI";
 
@@ -62,13 +66,15 @@ public class GraphvizUtil {
             left.addLink(left.port(join.getColumnLeft()).linkTo(right.port(join.getColumnRight())));
         }
         g.add(nodes.values().toArray(new MutableNode[0]));
-
-        log.debug("outputFile = {}", outputFile.getPath());
+        log.debug(String.format("outputFile = %s", outputFile.getPath()));
+        ClassLoader origin = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(Graphviz.class.getClassLoader());
         Graphviz.fromGraph(g)
-                .engine(Engine.NEATO)
+                .engine(Engine.DOT)
                 .notValidating()
                 .render(Format.SVG)
                 .toFile(outputFile);
+        Thread.currentThread().setContextClassLoader(origin);
     }
 
 }

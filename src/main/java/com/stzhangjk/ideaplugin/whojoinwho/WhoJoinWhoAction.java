@@ -5,6 +5,7 @@ import ch.tools.intellij.psi.PsiTools;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
@@ -26,12 +27,13 @@ import java.util.TreeSet;
 
 public class WhoJoinWhoAction extends AnAction {
 
+    private static final Logger log = Logger.getInstance(WhoJoinWhoAction.class);
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent event) {
         VirtualFile fileSelected = event.getData(CommonDataKeys.VIRTUAL_FILE);
         if (fileSelected == null) {
-            System.out.println("没选中文件");
+            log.info("没选中文件");
             return;
         }
 
@@ -40,16 +42,16 @@ public class WhoJoinWhoAction extends AnAction {
             if (fileOrDir.isDirectory() || !"java".equals(fileOrDir.getExtension())) {
                 return true;
             }
-            System.out.printf("处理[%s]\n", fileOrDir.getPath());
+            log.info(String.format("处理[%s]\n", fileOrDir.getPath()));
             PsiFile psiFile = PsiUtilCore.getPsiFile(event.getProject(), fileOrDir);
             psiFile.accept(new JavaRecursiveElementVisitor() {
 
                 @Override
                 public void visitVariable(PsiVariable variable) {
-                    System.out.println("==============");
-                    System.out.printf("处理[%s]\n", variable.getName());
+                    log.info("==============");
+                    log.info(String.format("处理[%s]\n", variable.getName()));
 //                    for (PsiElement child : variable.getChildren()) {
-//                        System.out.printf("name=\"%s\", text=\"%s\", type=\"%s\"\n", variable.getName(), child.getText(), child.getClass());
+//                        log.info(String.format("name=\"%s\", text=\"%s\", type=\"%s\"\n", variable.getName(), child.getText(), child.getClass());
 //                    }
 
                     if (variable.getInitializer() == null) {
@@ -61,11 +63,11 @@ public class WhoJoinWhoAction extends AnAction {
                             && !(variable.getInitializer() instanceof PsiMethodCallExpression)
                             && !(variable.getInitializer() instanceof PsiExpressionListResolver)
                             && PsiTreeUtil.getChildrenOfTypeAsList(variable.getInitializer(), PsiMethodCallExpression.class).isEmpty()) {
-                        System.out.println(variable.getInitializer().getText());
+                        log.info(variable.getInitializer().getText());
                         String sql = variable.getInitializer() instanceof PsiLiteralExpression
                                 ? variable.getInitializer().getText().replace("\"", "")
                                 : PsiTools.psiElementToString(variable.getInitializer());
-                        System.out.printf("%s=\"%s\"\n", variable.getName(), sql);
+                        log.info(String.format("%s=\"%s\"\n", variable.getName(), sql));
                         joins.addAll(extract(sql));
                     }
                 }
@@ -84,11 +86,11 @@ public class WhoJoinWhoAction extends AnAction {
             Statement statement = CCJSqlParserUtil.parse(sql);
             if (statement instanceof Select) {
                 Set<JoinEntry> js = ExtractUtil.extract(((Select) statement));
-                System.out.println(js);
+                log.info(js.toString());
                 return js;
             }
         } catch (JSQLParserException e) {
-//           System.out.printf("解析sql失败[%s]\n", e.getMessage());
+//           log.info(String.format("解析sql失败[%s]\n", e.getMessage()));
         }
         return new TreeSet<>(JoinEntry.COMPARATOR);
     }
