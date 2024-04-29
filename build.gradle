@@ -5,9 +5,32 @@
  * To learn more about Gradle by exploring our Samples at https://docs.gradle.org/8.5/samples
  * This project uses @Incubating APIs which are subject to change.
  */
+
+buildscript {
+    repositories {
+        mavenLocal()
+        maven {
+            url 'https://maven.aliyun.com/repository/public/'
+        }
+        maven {
+            url 'https://maven.aliyun.com/repository/gradle-plugin'
+        }
+    }
+}
+
 plugins {
     id 'java'
     id 'org.jetbrains.intellij' version '1.16.1'
+}
+
+repositories {
+    mavenLocal()
+    maven {
+        url 'https://maven.aliyun.com/repository/public/'
+    }
+    maven {
+        url 'https://maven.aliyun.com/repository/gradle-plugin'
+    }
 }
 
 group 'com.stzhangjk.ideaplugins'
@@ -15,19 +38,11 @@ version '1.0.0-SNAPSHOT'
 sourceCompatibility = 11
 targetCompatibility = 11
 
-
-repositories {
-    maven {
-        url 'https://maven.aliyun.com/repository/central'
-    }
-}
-
 dependencies {
     implementation 'com.github.jsqlparser:jsqlparser:4.6'
-    implementation 'guru.nidi:graphviz-java:0.18.1'
-    implementation 'org.projectlombok:lombok:1.18.30'
-    annotationProcessor 'org.projectlombok:lombok:1.18.30'
-
+    implementation 'guru.nidi:graphviz-java-all-j2v8:0.18.1'
+//    implementation 'com.eclipsesource.j2v8:j2v8_linux_x86_64:4.6.0'
+    implementation 'ch.qos.logback:logback-classic:1.2.3'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
