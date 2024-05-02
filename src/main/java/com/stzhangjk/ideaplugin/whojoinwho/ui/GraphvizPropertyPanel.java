@@ -21,17 +21,17 @@ import java.util.List;
 public class GraphvizPropertyPanel extends JPanel {
 
 
-    private GraphvizPropertyTextFieldWithBrowseButton graphButton;
-    private GraphvizPropertyTextFieldWithBrowseButton nodeButton;
-    private GraphvizPropertyTextFieldWithBrowseButton edgeButton;
+    private final GraphvizPropertyTextFieldWithBrowseButton graphButton;
+    private final GraphvizPropertyTextFieldWithBrowseButton nodeButton;
+    private final GraphvizPropertyTextFieldWithBrowseButton edgeButton;
 
-    private ActionListener openDialogListener;
+    private final ActionListener openDialogListener;
 
     private final List<EnvironmentVariable> graphProperties;
     private final List<EnvironmentVariable> nodeProperties;
     private final List<EnvironmentVariable> edgeProperties;
-    private Project project;
-    private WhoJoinWhoSettingsService settingsService;
+    private final Project project;
+    private final WhoJoinWhoSettingsService settingsService;
 
 
     public GraphvizPropertyPanel(Project project) {
