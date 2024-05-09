@@ -8,13 +8,19 @@
 
 buildscript {
     repositories {
-        mavenLocal()
+        maven {
+            url 'https://www.jetbrains.com/intellij-repository/releases'
+        }
+        maven {
+            url 'https://cache-redirector.jetbrains.com/intellij-dependencies'
+        }
         maven {
             url 'https://maven.aliyun.com/repository/public/'
         }
         maven {
             url 'https://maven.aliyun.com/repository/gradle-plugin'
         }
+        mavenLocal()
     }
 }
 
@@ -24,13 +30,20 @@ plugins {
 }
 
 repositories {
-    mavenLocal()
     maven {
         url 'https://maven.aliyun.com/repository/public/'
     }
     maven {
         url 'https://maven.aliyun.com/repository/gradle-plugin'
     }
+    maven {
+        url 'https://www.jetbrains.com/intellij-repository/releases'
+    }
+    maven {
+        url 'https://cache-redirector.jetbrains.com/intellij-dependencies'
+    }
+    mavenLocal()
+
 }
 
 group 'com.stzhangjk.ideaplugins'
@@ -53,6 +66,7 @@ intellij {
 //    localPath = 'C:\\Program Files\\JetBrains\\IntelliJ IDEA Community Edition 2021.3.1'
     plugins = ['Java2SQL:0.4', 'java']
     version = '2021.3.1'
+    type = 'IU'
 }
 patchPluginXml {
     changeNotes = """
