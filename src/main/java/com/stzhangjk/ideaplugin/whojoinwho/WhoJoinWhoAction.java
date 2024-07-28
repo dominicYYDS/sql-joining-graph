@@ -6,6 +6,8 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.ui.popup.JBPopup;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
@@ -76,11 +78,16 @@ public class WhoJoinWhoAction extends AnAction {
             });
             return true;
         });
+
         try {
             WhoJoinWhoSettingsService settingsService = event.getProject().getService(WhoJoinWhoSettingsService.class);
             WhoJoinWhoSettings settings = settingsService.getSettings();
             GraphvizUtil.draw(joins, new File(settings.getOutputFile()), settings);
+            JBPopup popup = JBPopupFactory.getInstance().createMessage(String.format("whojoinwho diagram finished!! at %s", settings.getOutputFile()));
+            popup.showInBestPositionFor(event.getDataContext());
         } catch (IOException e) {
+            JBPopup popup = JBPopupFactory.getInstance().createMessage(String.format("whojoinwho diagram error: %s", e.getLocalizedMessage()));
+            popup.showInBestPositionFor(event.getDataContext());
             throw new RuntimeException(e);
         }
     }
