@@ -2,6 +2,7 @@ package com.stzhangjk.ideaplugin.whojoinwho.utils;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.stzhangjk.ideaplugin.whojoinwho.entity.JoinEntry;
+import com.stzhangjk.ideaplugin.whojoinwho.entity.WhoJoinWhoSettings;
 import guru.nidi.graphviz.attribute.Font;
 import guru.nidi.graphviz.attribute.Rank;
 import guru.nidi.graphviz.attribute.Records;
@@ -28,7 +29,7 @@ public class GraphvizUtil {
 
     private static final String fontname = "Microsoft YaHei UI";
 
-    public static void draw(Set<JoinEntry> joins, File outputFile) throws IOException {
+    public static void draw(Set<JoinEntry> joins, File outputFile, WhoJoinWhoSettings settings) throws IOException {
         if (joins == null || joins.size() == 0) {
             return;
         }

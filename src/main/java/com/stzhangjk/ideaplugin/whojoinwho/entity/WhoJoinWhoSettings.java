@@ -11,6 +11,8 @@ public class WhoJoinWhoSettings {
     private Map<String, String> nodeAttrs;
 
     private String engine;
+    /** 输出文件 */
+    private String outputFile;
 
     public Map<String, String> getGraphAttrs() {
         return graphAttrs;
@@ -45,6 +47,15 @@ public class WhoJoinWhoSettings {
 
     public WhoJoinWhoSettings setEngine(String engine) {
         this.engine = engine;
+        return this;
+    }
+
+    public String getOutputFile() {
+        return outputFile;
+    }
+
+    public WhoJoinWhoSettings setOutputFile(String outputFile) {
+        this.outputFile = outputFile;
         return this;
     }
 }

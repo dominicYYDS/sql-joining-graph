@@ -2,21 +2,27 @@ package com.stzhangjk.ideaplugin.whojoinwho.ui;
 
 import com.intellij.execution.util.EnvVariablesTable;
 import com.intellij.execution.util.EnvironmentVariable;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.TextComponentAccessor;
+import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.panels.VerticalLayout;
 import com.stzhangjk.ideaplugin.whojoinwho.entity.WhoJoinWhoSettings;
 import com.stzhangjk.ideaplugin.whojoinwho.service.WhoJoinWhoSettingsService;
 import com.stzhangjk.ideaplugin.whojoinwho.utils.SettingsUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.event.ActionListener;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class GraphvizPropertyPanel extends JPanel {
 
@@ -24,6 +30,7 @@ public class GraphvizPropertyPanel extends JPanel {
     private final GraphvizPropertyTextFieldWithBrowseButton graphButton;
     private final GraphvizPropertyTextFieldWithBrowseButton nodeButton;
     private final GraphvizPropertyTextFieldWithBrowseButton edgeButton;
+    private final TextFieldWithBrowseButton outputFileButton;
 
     private final ActionListener openDialogListener;
 
@@ -43,17 +50,8 @@ public class GraphvizPropertyPanel extends JPanel {
         setLayout(layout);
 
         openDialogListener = e -> createDialog().show();
-        //配置输入框文本改变时更新配置
-        DocumentListener onTextChangeListener = new DocumentAdapter() {
-            @Override
-            protected void textChanged(@NotNull DocumentEvent e) {
-                settingsService.setSettings(new WhoJoinWhoSettings()
-                        .setGraphAttrs(EnvVariablesTable.parseEnvsFromText(graphButton.getText()))
-                        .setNodeAttrs(EnvVariablesTable.parseEnvsFromText(nodeButton.getText()))
-                        .setEdgeAttrs(EnvVariablesTable.parseEnvsFromText(edgeButton.getText())));
-            }
-        };
 
+        //三大graphviz属性
         graphProperties = new ArrayList<>();
         nodeProperties = new ArrayList<>();
         edgeProperties = new ArrayList<>();
@@ -61,16 +59,6 @@ public class GraphvizPropertyPanel extends JPanel {
         graphButton = new GraphvizPropertyTextFieldWithBrowseButton();
         nodeButton = new GraphvizPropertyTextFieldWithBrowseButton();
         edgeButton = new GraphvizPropertyTextFieldWithBrowseButton();
-
-        if (settingsService.getState() != null) {
-            graphButton.setText(SettingsUtil.stringifyProps(settingsService.getState().getGraphAttrs()));
-            nodeButton.setText(SettingsUtil.stringifyProps(settingsService.getState().getNodeAttrs()));
-            edgeButton.setText(SettingsUtil.stringifyProps(settingsService.getState().getEdgeAttrs()));
-        }
-
-        graphButton.getTextField().getDocument().addDocumentListener(onTextChangeListener);
-        nodeButton.getTextField().getDocument().addDocumentListener(onTextChangeListener);
-        edgeButton.getTextField().getDocument().addDocumentListener(onTextChangeListener);
 
         graphButton.addActionListener(openDialogListener);
         nodeButton.addActionListener(openDialogListener);
@@ -89,6 +77,44 @@ public class GraphvizPropertyPanel extends JPanel {
         add(nodeButton);
         add(edgePropLabel);
         add(edgeButton);
+
+        //输出文件名
+        outputFileButton = new TextFieldWithBrowseButton();
+        outputFileButton.addBrowseFolderListener("选择输出文件", "选择输出文件", (Project)null, FileChooserDescriptorFactory.createSingleFileOrFolderDescriptor(), TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
+        JBLabel outputFileLabel = new JBLabel("Choose Output File");
+        outputFileLabel.setLabelFor(outputFileButton);
+        add(outputFileLabel);
+        add(outputFileButton);
+
+
+        //设置初始值或保存的值
+        if (settingsService.getState() != null) {
+            //三大属性
+            graphButton.setText(SettingsUtil.stringifyProps(settingsService.getState().getGraphAttrs()));
+            nodeButton.setText(SettingsUtil.stringifyProps(settingsService.getState().getNodeAttrs()));
+            edgeButton.setText(SettingsUtil.stringifyProps(settingsService.getState().getEdgeAttrs()));
+            //输出文件
+            outputFileButton.setText(Optional.ofNullable(settingsService.getState().getOutputFile())
+                    .filter(StringUtils::isNotBlank)
+                    .orElseGet(() -> Paths.get(project.getBasePath(), "db.svg").toString()));
+        }
+
+
+        //配置输入框文本改变时更新配置
+        DocumentListener onTextChangeListener = new DocumentAdapter() {
+            @Override
+            protected void textChanged(@NotNull DocumentEvent e) {
+                settingsService.setSettings(new WhoJoinWhoSettings()
+                        .setGraphAttrs(EnvVariablesTable.parseEnvsFromText(graphButton.getText()))
+                        .setNodeAttrs(EnvVariablesTable.parseEnvsFromText(nodeButton.getText()))
+                        .setEdgeAttrs(EnvVariablesTable.parseEnvsFromText(edgeButton.getText()))
+                        .setOutputFile(outputFileButton.getText()));
+            }
+        };
+        graphButton.getTextField().getDocument().addDocumentListener(onTextChangeListener);
+        nodeButton.getTextField().getDocument().addDocumentListener(onTextChangeListener);
+        edgeButton.getTextField().getDocument().addDocumentListener(onTextChangeListener);
+        outputFileButton.getTextField().getDocument().addDocumentListener(onTextChangeListener);
 
     }
 

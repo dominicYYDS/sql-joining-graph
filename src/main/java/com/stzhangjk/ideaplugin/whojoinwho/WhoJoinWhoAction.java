@@ -12,6 +12,8 @@ import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
 import com.stzhangjk.ideaplugin.whojoinwho.entity.JoinEntry;
+import com.stzhangjk.ideaplugin.whojoinwho.entity.WhoJoinWhoSettings;
+import com.stzhangjk.ideaplugin.whojoinwho.service.WhoJoinWhoSettingsService;
 import com.stzhangjk.ideaplugin.whojoinwho.utils.ExtractUtil;
 import com.stzhangjk.ideaplugin.whojoinwho.utils.GraphvizUtil;
 import net.sf.jsqlparser.JSQLParserException;
@@ -75,7 +77,9 @@ public class WhoJoinWhoAction extends AnAction {
             return true;
         });
         try {
-            GraphvizUtil.draw(joins, new File(event.getProject().getBasePath() + "/db.svg"));
+            WhoJoinWhoSettingsService settingsService = event.getProject().getService(WhoJoinWhoSettingsService.class);
+            WhoJoinWhoSettings settings = settingsService.getSettings();
+            GraphvizUtil.draw(joins, new File(settings.getOutputFile()), settings);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
