@@ -51,6 +51,8 @@ version '1.0.0-SNAPSHOT'
 sourceCompatibility = 11
 targetCompatibility = 11
 
+tasks.compileJava.options.encoding = 'UTF-8'
+
 dependencies {
     implementation 'com.github.jsqlparser:jsqlparser:4.6'
     implementation 'guru.nidi:graphviz-java-all-j2v8:0.18.1'
@@ -64,9 +66,10 @@ dependencies {
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
 //    localPath = 'C:\\Program Files\\JetBrains\\IntelliJ IDEA Community Edition 2021.3.1'
+    //会自动引入dependencies依赖
     plugins = ['Java2SQL:0.4', 'java']
     version = '2021.3.1'
-    type = 'IU'
+    type = 'IC'
 }
 patchPluginXml {
     changeNotes = """
