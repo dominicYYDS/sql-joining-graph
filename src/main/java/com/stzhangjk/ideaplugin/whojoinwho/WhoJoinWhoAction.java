@@ -41,6 +41,11 @@ public class WhoJoinWhoAction extends AnAction {
             return;
         }
 
+        NotificationGroupManager.getInstance()
+                .getNotificationGroup("WhoJoinWho Notification Group")
+                .createNotification("Start generating table diagram!! Please wait a few...", NotificationType.INFORMATION)
+                .notify(event.getProject());
+
         Set<JoinEntry> joins = new TreeSet<>(JoinEntry.COMPARATOR);
         VfsUtilCore.iterateChildrenRecursively(fileSelected, f -> true, fileOrDir -> {
             if (fileOrDir.isDirectory() || !"java".equals(fileOrDir.getExtension())) {
