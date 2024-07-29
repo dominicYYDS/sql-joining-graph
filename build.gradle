@@ -71,10 +71,14 @@ intellij {
     version = '2021.3.1'
     type = 'IC'
 }
-patchPluginXml {
-    changeNotes = """
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>"""
+
+signPlugin {
+    certificateChainFile = providers.environmentVariable("CERTIFICATE_CHAIN").map {s -> new File(s)}.getOrNull()
+    privateKeyFile = providers.environmentVariable("PRIVATE_KEY").map {s -> new File(s)}.getOrNull()
+    password = providers.environmentVariable("PRIVATE_KEY_PASSWORD").getOrNull()
+}
+publishPlugin {
+    token = providers.environmentVariable("PUBLISH_TOKEN").getOrNull()
 }
 
 test {
