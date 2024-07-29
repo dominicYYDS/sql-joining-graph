@@ -1,17 +1,15 @@
 <idea-plugin>
-    <id>com.your.company.unique.plugin.id</id>
+    <id>com.stzhangjk.ideaplugin.whojoinwho</id>
     <name>who-join-who</name>
     <version>1.0</version>
-    <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+    <vendor email="stzhangjk@163.com" url="http://www.yourcompany.com">stzhangjk</vendor>
 
     <description><![CDATA[
-      Enter short description for your plugin here.<br>
-      <em>most HTML tags may be used</em>
+      By scanning selected code for SQL strings, my tool generates a graph that shows the relationships of columns between tables based on join and where conditions in the SQL.
     ]]></description>
 
     <change-notes><![CDATA[
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>
+      Supporting java String field for now.
     ]]>
     </change-notes>
 
