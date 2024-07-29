@@ -31,6 +31,10 @@
         <toolWindow id="who-join-who" anchor="right" factoryClass="com.stzhangjk.ideaplugin.whojoinwho.ui.WhoJoinWhoToolWindowFactory" />
 
         <projectService serviceImplementation="com.stzhangjk.ideaplugin.whojoinwho.service.WhoJoinWhoSettingsService"/>
+
+        <notificationGroup id="WhoJoinWho Notification Group"
+                           displayType="BALLOON"
+                           key="notification.group.name"/>
     </extensions>
 
     <actions>
