@@ -16,4 +16,4 @@ pluginManagement{
         }
     }
 }
-rootProject.name = 'whojoinwho'
+rootProject.name = 'sql-joining-graph'

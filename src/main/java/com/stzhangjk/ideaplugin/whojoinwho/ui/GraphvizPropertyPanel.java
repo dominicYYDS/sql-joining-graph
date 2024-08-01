@@ -9,10 +9,9 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.panels.VerticalLayout;
-import com.stzhangjk.ideaplugin.whojoinwho.entity.WhoJoinWhoSettings;
-import com.stzhangjk.ideaplugin.whojoinwho.service.WhoJoinWhoSettingsService;
+import com.stzhangjk.ideaplugin.whojoinwho.entity.SqlJoiningGraphSettings;
+import com.stzhangjk.ideaplugin.whojoinwho.service.SqlJoiningGraphSettingsService;
 import com.stzhangjk.ideaplugin.whojoinwho.utils.SettingsUtil;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -22,7 +21,6 @@ import java.awt.event.ActionListener;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class GraphvizPropertyPanel extends JPanel {
 
@@ -38,13 +36,13 @@ public class GraphvizPropertyPanel extends JPanel {
     private final List<EnvironmentVariable> nodeProperties;
     private final List<EnvironmentVariable> edgeProperties;
     private final Project project;
-    private final WhoJoinWhoSettingsService settingsService;
+    private final SqlJoiningGraphSettingsService settingsService;
 
 
     public GraphvizPropertyPanel(Project project) {
 
         this.project = project;
-        settingsService = project.getService(WhoJoinWhoSettingsService.class);
+        settingsService = project.getService(SqlJoiningGraphSettingsService.class);
 
         VerticalLayout layout = new VerticalLayout(10);
         setLayout(layout);
@@ -71,16 +69,17 @@ public class GraphvizPropertyPanel extends JPanel {
         nodePropLabel.setLabelFor(nodeButton);
         edgePropLabel.setLabelFor(edgeButton);
 
-        add(graphPropLabel);
-        add(graphButton);
-        add(nodePropLabel);
-        add(nodeButton);
-        add(edgePropLabel);
-        add(edgeButton);
+//        add(graphPropLabel);
+//        add(graphButton);
+//        add(nodePropLabel);
+//        add(nodeButton);
+//        add(edgePropLabel);
+//        add(edgeButton);
 
         //输出文件名
         outputFileButton = new TextFieldWithBrowseButton();
-        outputFileButton.addBrowseFolderListener("选择输出文件", "选择输出文件", (Project)null, FileChooserDescriptorFactory.createSingleFileOrFolderDescriptor(), TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
+        outputFileButton.addBrowseFolderListener("选择输出文件", "选择输出文件", null, FileChooserDescriptorFactory.createSingleFileOrFolderDescriptor(), TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
+        outputFileButton.setText(Paths.get(project.getBasePath(), "sql-joining-graph.svg").toString());
         JBLabel outputFileLabel = new JBLabel("Choose Output File");
         outputFileLabel.setLabelFor(outputFileButton);
         add(outputFileLabel);
@@ -94,9 +93,7 @@ public class GraphvizPropertyPanel extends JPanel {
             nodeButton.setText(SettingsUtil.stringifyProps(settingsService.getState().getNodeAttrs()));
             edgeButton.setText(SettingsUtil.stringifyProps(settingsService.getState().getEdgeAttrs()));
             //输出文件
-            outputFileButton.setText(Optional.ofNullable(settingsService.getState().getOutputFile())
-                    .filter(StringUtils::isNotBlank)
-                    .orElseGet(() -> Paths.get(project.getBasePath(), "db.svg").toString()));
+            outputFileButton.setText(settingsService.getState().getOutputFile());
         }
 
 
@@ -104,7 +101,7 @@ public class GraphvizPropertyPanel extends JPanel {
         DocumentListener onTextChangeListener = new DocumentAdapter() {
             @Override
             protected void textChanged(@NotNull DocumentEvent e) {
-                settingsService.setSettings(new WhoJoinWhoSettings()
+                settingsService.setSettings(new SqlJoiningGraphSettings()
                         .setGraphAttrs(EnvVariablesTable.parseEnvsFromText(graphButton.getText()))
                         .setNodeAttrs(EnvVariablesTable.parseEnvsFromText(nodeButton.getText()))
                         .setEdgeAttrs(EnvVariablesTable.parseEnvsFromText(edgeButton.getText()))

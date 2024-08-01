@@ -2,7 +2,7 @@ package com.stzhangjk.ideaplugin.whojoinwho.entity;
 
 import java.util.Map;
 
-public class WhoJoinWhoSettings {
+public class SqlJoiningGraphSettings {
 
     private Map<String, String> graphAttrs;
 
@@ -18,7 +18,7 @@ public class WhoJoinWhoSettings {
         return graphAttrs;
     }
 
-    public WhoJoinWhoSettings setGraphAttrs(Map<String, String> graphAttrs) {
+    public SqlJoiningGraphSettings setGraphAttrs(Map<String, String> graphAttrs) {
         this.graphAttrs = graphAttrs;
         return this;
     }
@@ -27,7 +27,7 @@ public class WhoJoinWhoSettings {
         return edgeAttrs;
     }
 
-    public WhoJoinWhoSettings setEdgeAttrs(Map<String, String> edgeAttrs) {
+    public SqlJoiningGraphSettings setEdgeAttrs(Map<String, String> edgeAttrs) {
         this.edgeAttrs = edgeAttrs;
         return this;
     }
@@ -36,7 +36,7 @@ public class WhoJoinWhoSettings {
         return nodeAttrs;
     }
 
-    public WhoJoinWhoSettings setNodeAttrs(Map<String, String> nodeAttrs) {
+    public SqlJoiningGraphSettings setNodeAttrs(Map<String, String> nodeAttrs) {
         this.nodeAttrs = nodeAttrs;
         return this;
     }
@@ -45,7 +45,7 @@ public class WhoJoinWhoSettings {
         return engine;
     }
 
-    public WhoJoinWhoSettings setEngine(String engine) {
+    public SqlJoiningGraphSettings setEngine(String engine) {
         this.engine = engine;
         return this;
     }
@@ -54,7 +54,7 @@ public class WhoJoinWhoSettings {
         return outputFile;
     }
 
-    public WhoJoinWhoSettings setOutputFile(String outputFile) {
+    public SqlJoiningGraphSettings setOutputFile(String outputFile) {
         this.outputFile = outputFile;
         return this;
     }

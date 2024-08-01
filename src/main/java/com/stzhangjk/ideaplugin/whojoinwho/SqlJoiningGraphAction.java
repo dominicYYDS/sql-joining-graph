@@ -14,8 +14,8 @@ import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
 import com.stzhangjk.ideaplugin.whojoinwho.entity.JoinEntry;
-import com.stzhangjk.ideaplugin.whojoinwho.entity.WhoJoinWhoSettings;
-import com.stzhangjk.ideaplugin.whojoinwho.service.WhoJoinWhoSettingsService;
+import com.stzhangjk.ideaplugin.whojoinwho.entity.SqlJoiningGraphSettings;
+import com.stzhangjk.ideaplugin.whojoinwho.service.SqlJoiningGraphSettingsService;
 import com.stzhangjk.ideaplugin.whojoinwho.utils.ExtractUtil;
 import com.stzhangjk.ideaplugin.whojoinwho.utils.GraphvizUtil;
 import net.sf.jsqlparser.JSQLParserException;
@@ -29,9 +29,9 @@ import java.io.IOException;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class WhoJoinWhoAction extends AnAction {
+public class SqlJoiningGraphAction extends AnAction {
 
-    private static final Logger log = Logger.getInstance(WhoJoinWhoAction.class);
+    private static final Logger log = Logger.getInstance(SqlJoiningGraphAction.class);
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent event) {
@@ -42,7 +42,7 @@ public class WhoJoinWhoAction extends AnAction {
         }
 
         NotificationGroupManager.getInstance()
-                .getNotificationGroup("WhoJoinWho Notification Group")
+                .getNotificationGroup("SqlJoiningGraph Notification Group")
                 .createNotification("Start generating table diagram!! Please wait a few...", NotificationType.INFORMATION)
                 .notify(event.getProject());
 
@@ -85,17 +85,17 @@ public class WhoJoinWhoAction extends AnAction {
         });
 
         try {
-            WhoJoinWhoSettingsService settingsService = event.getProject().getService(WhoJoinWhoSettingsService.class);
-            WhoJoinWhoSettings settings = settingsService.getSettings();
+            SqlJoiningGraphSettingsService settingsService = event.getProject().getService(SqlJoiningGraphSettingsService.class);
+            SqlJoiningGraphSettings settings = settingsService.getSettings();
             GraphvizUtil.draw(joins, new File(settings.getOutputFile()), settings);
             NotificationGroupManager.getInstance()
-                    .getNotificationGroup("WhoJoinWho Notification Group")
-                    .createNotification(String.format("whojoinwho diagram finished!! at %s", settings.getOutputFile()), NotificationType.INFORMATION)
+                    .getNotificationGroup("SqlJoiningGraph Notification Group")
+                    .createNotification(String.format("sql joining graph finished!! at %s", settings.getOutputFile()), NotificationType.INFORMATION)
                     .notify(event.getProject());
         } catch (IOException e) {
             NotificationGroupManager.getInstance()
-                    .getNotificationGroup("WhoJoinWho Notification Group")
-                    .createNotification(String.format("whojoinwho diagram error: %s", e.getLocalizedMessage()), NotificationType.ERROR)
+                    .getNotificationGroup("SqlJoiningGraph Notification Group")
+                    .createNotification(String.format("sql joining graph error: %s", e.getLocalizedMessage()), NotificationType.ERROR)
                     .notify(event.getProject());
             throw new RuntimeException(e);
         }

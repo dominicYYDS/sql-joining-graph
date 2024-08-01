@@ -1,15 +1,25 @@
 <idea-plugin>
-    <id>com.stzhangjk.ideaplugin.whojoinwho</id>
-    <name>who-join-who</name>
+    <id>sql-joining-graph</id>
+    <name>SqlJoinGraph</name>
     <version>1.0</version>
-    <vendor email="stzhangjk@163.com" url="http://www.yourcompany.com">stzhangjk</vendor>
+    <vendor email="stzhangjk@163.com" url="http://www.sqljoininggraph.com">stzhangjk</vendor>
 
     <description><![CDATA[
+      <h2>Overview</h2>
       By scanning selected code for SQL strings, my tool generates a graph that shows the relationships of columns between tables based on join and where conditions in the SQL.
+      <br/>
+      <h2>Usage</h2>
+      Just right click at your source file or directory where contains sql string (only supporting java String field for now),
+      <br/>
+      and click <strong>'generate sql joining graph'</strong>.
+      <h2>Limitation</h2>
+      Only Scanning java String field for now.
+      <h2>Thanks For</h2>
+      thanks for plugin 'Java2SQL'.
     ]]></description>
 
     <change-notes><![CDATA[
-      Supporting java String field for now.
+      Only Supporting java String field for now.
     ]]>
     </change-notes>
 
@@ -26,19 +36,19 @@
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
 
-        <toolWindow id="who-join-who" anchor="right" factoryClass="com.stzhangjk.ideaplugin.whojoinwho.ui.WhoJoinWhoToolWindowFactory" />
+        <toolWindow id="sql-join-graph" anchor="right" factoryClass="com.stzhangjk.ideaplugin.whojoinwho.ui.SqlJoiningGraphToolWindowFactory" />
 
-        <projectService serviceImplementation="com.stzhangjk.ideaplugin.whojoinwho.service.WhoJoinWhoSettingsService"/>
+        <projectService serviceImplementation="com.stzhangjk.ideaplugin.whojoinwho.service.SqlJoiningGraphSettingsService"/>
 
-        <notificationGroup id="WhoJoinWho Notification Group"
+        <notificationGroup id="SqlJoiningGraph Notification Group"
                            displayType="BALLOON"
                            key="notification.group.name"/>
     </extensions>
 
     <actions>
         <!-- Add your actions here -->
-        <action class="com.stzhangjk.ideaplugin.whojoinwho.WhoJoinWhoAction"
-                text="WhoJoinWho">
+        <action class="com.stzhangjk.ideaplugin.whojoinwho.SqlJoiningGraphAction"
+                text="generate sql joining graph">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="AnalyzeMenu"/>
         </action>
     </actions>
