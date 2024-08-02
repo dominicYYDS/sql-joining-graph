@@ -70,6 +70,7 @@ intellij {
     plugins = ['Java2SQL:0.4', 'java']
     version = '2021.3.1'
     type = 'IC'
+    sandboxDir = './.sandbox'
 }
 
 signPlugin {
