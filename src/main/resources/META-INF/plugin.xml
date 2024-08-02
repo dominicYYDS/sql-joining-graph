@@ -1,8 +1,8 @@
 <idea-plugin>
     <id>sql-joining-graph</id>
-    <name>SqlJoinGraph</name>
+    <name>SqlJoiningGraph</name>
     <version>1.0</version>
-    <vendor email="stzhangjk@163.com" url="http://www.sqljoininggraph.com">stzhangjk</vendor>
+    <vendor email="dominicyyds@163.com" url="https://sqljoininggraph.dominicyyds.com">dominicyyds</vendor>
 
     <description><![CDATA[
       <h2>Overview</h2>
@@ -36,7 +36,7 @@
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
 
-        <toolWindow id="sql-join-graph" anchor="right" factoryClass="com.stzhangjk.ideaplugin.whojoinwho.ui.SqlJoiningGraphToolWindowFactory" />
+        <toolWindow id="sql-joining-graph" anchor="right" factoryClass="com.stzhangjk.ideaplugin.whojoinwho.ui.SqlJoiningGraphToolWindowFactory" />
 
         <projectService serviceImplementation="com.stzhangjk.ideaplugin.whojoinwho.service.SqlJoiningGraphSettingsService"/>
 
