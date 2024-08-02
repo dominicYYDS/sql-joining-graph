@@ -46,7 +46,7 @@ repositories {
 
 }
 
-group 'com.stzhangjk.ideaplugins'
+group 'com.dominicyyds'
 version '1.0.0-SNAPSHOT'
 sourceCompatibility = 11
 targetCompatibility = 11

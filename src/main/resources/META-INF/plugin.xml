@@ -36,9 +36,9 @@
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
 
-        <toolWindow id="sql-joining-graph" anchor="right" factoryClass="com.stzhangjk.ideaplugin.whojoinwho.ui.SqlJoiningGraphToolWindowFactory" />
+        <toolWindow id="sql-joining-graph" anchor="right" factoryClass="com.dominicyyds.sqljoininggraph.ui.SqlJoiningGraphToolWindowFactory" />
 
-        <projectService serviceImplementation="com.stzhangjk.ideaplugin.whojoinwho.service.SqlJoiningGraphSettingsService"/>
+        <projectService serviceImplementation="com.dominicyyds.sqljoininggraph.service.SqlJoiningGraphSettingsService"/>
 
         <notificationGroup id="SqlJoiningGraph Notification Group"
                            displayType="BALLOON"
@@ -47,7 +47,7 @@
 
     <actions>
         <!-- Add your actions here -->
-        <action class="com.stzhangjk.ideaplugin.whojoinwho.SqlJoiningGraphAction"
+        <action class="com.dominicyyds.sqljoininggraph.SqlJoiningGraphAction"
                 text="generate sql joining graph">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="AnalyzeMenu"/>
         </action>
