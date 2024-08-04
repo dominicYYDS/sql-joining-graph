@@ -33,9 +33,10 @@ public class JoinSelectExtractor implements JoinEntryExtractor<JoinSelect> {
                             String cl = tcl.getColumn().toLowerCase();
                             String tr = tcr.getTable().toLowerCase();
                             String cr = tcr.getColumn().toLowerCase();
-                            if (!tl.equals(tr) && !cl.equals(cr)) {  //排除同表同列
-                                joins.add(new JoinEntry(tl, cl, tr, cr));
+                            if (tl.equals(tr) && cl.equals(cr)) {  //排除同表同列
+                                continue;
                             }
+                            joins.add(new JoinEntry(tl, cl, tr, cr));
                         }
                     }
                     return joins.stream();
