@@ -25,7 +25,8 @@ public class JoinSelectResolver implements TableAndColumnResolver<JoinSelect> {
         JoinNode sub;
         if (StringUtils.isBlank(tableAlias)) {
             if (select.getChildren().size() != 1) {
-                return new ArrayList<>();  //无指定表且有多个子表，无法解析
+                //TODO 可通过database tools查询表原数据进一步解析
+                return new ArrayList<>();  //无指定表且有多个子表，无法解析  例如：select c1 from table1, table2
             }
             sub = select.getChildren().get(0);
         } else {
