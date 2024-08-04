@@ -60,7 +60,8 @@ public class PsiVariableStringConstComputer implements PsiStringConstComputer<Ps
             return false;
         }
         //只支持String
-        if (!strClassName.equals(variable.getType().getCanonicalText())) {
+        String typeText = variable.getTypeElement().getText();
+        if (!strClassName.equals(typeText) && !"String".equals(typeText)) {
             return false;
         }
         //不支持函数表达式，三目运算
