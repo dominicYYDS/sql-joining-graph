@@ -67,7 +67,7 @@ dependencies {
 intellij {
 //    localPath = 'C:\\Program Files\\JetBrains\\IntelliJ IDEA Community Edition 2021.3.1'
     //会自动引入dependencies依赖
-    plugins = ['Java2SQL:0.4', 'java']
+    plugins = ['java']
     version = '2021.3.1'
     type = 'IC'
     sandboxDir = './.sandbox'

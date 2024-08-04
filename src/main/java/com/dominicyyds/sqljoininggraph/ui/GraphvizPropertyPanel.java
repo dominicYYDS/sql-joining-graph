@@ -101,7 +101,7 @@ public class GraphvizPropertyPanel extends JPanel {
         DocumentListener onTextChangeListener = new DocumentAdapter() {
             @Override
             protected void textChanged(@NotNull DocumentEvent e) {
-                settingsService.setSettings(new SqlJoiningGraphSettings()
+                settingsService.loadState(new SqlJoiningGraphSettings()
                         .setGraphAttrs(EnvVariablesTable.parseEnvsFromText(graphButton.getText()))
                         .setNodeAttrs(EnvVariablesTable.parseEnvsFromText(nodeButton.getText()))
                         .setEdgeAttrs(EnvVariablesTable.parseEnvsFromText(edgeButton.getText()))

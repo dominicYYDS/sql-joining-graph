@@ -14,8 +14,6 @@
       and click <strong>'generate sql joining graph'</strong>.
       <h2>Limitation</h2>
       Only Scanning java String field for now.
-      <h2>Thanks For</h2>
-      thanks for plugin 'Java2SQL'.
     ]]></description>
 
     <change-notes><![CDATA[
@@ -29,9 +27,8 @@
     <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->
     <depends>com.intellij.modules.platform</depends>
-    <!--  <depends>com.intellij.modules.java</depends>-->
-    <!--  <depends>com.intellij.java</depends>-->
-    <depends>Java2SQL</depends>
+<!--    <depends>com.intellij.modules.java</depends>-->
+    <depends>com.intellij.java</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->

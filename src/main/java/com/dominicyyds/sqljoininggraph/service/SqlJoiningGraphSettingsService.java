@@ -1,8 +1,11 @@
 package com.dominicyyds.sqljoininggraph.service;
 
-import com.intellij.openapi.components.*;
-import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.dominicyyds.sqljoininggraph.entity.SqlJoiningGraphSettings;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.Service;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,14 +24,5 @@ public class SqlJoiningGraphSettingsService implements PersistentStateComponent<
     public void loadState(@NotNull SqlJoiningGraphSettings state) {
         settings = new SqlJoiningGraphSettings();
         XmlSerializerUtil.copyBean(state, settings);
-    }
-
-    public SqlJoiningGraphSettings getSettings() {
-        return settings;
-    }
-
-    public SqlJoiningGraphSettingsService setSettings(SqlJoiningGraphSettings settings) {
-        this.settings = settings;
-        return this;
     }
 }
