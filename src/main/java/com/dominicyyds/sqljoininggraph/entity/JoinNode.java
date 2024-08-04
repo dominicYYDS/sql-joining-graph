@@ -9,6 +9,7 @@ public abstract class JoinNode {
 
     private SubType type;
 
+    /** 当前select的from节点或join节点 */
     private List<JoinNode> children = new ArrayList<>();
 
     private String alias;

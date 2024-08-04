@@ -19,6 +19,9 @@ public class PlainSelectJoinTreeBuilder implements JoinTreeBuilder<PlainSelect> 
 
     public static final PlainSelectJoinTreeBuilder INSTANCE = new PlainSelectJoinTreeBuilder();
 
+    /**
+     * 解析出JoinSelect
+     */
     @Override
     public JoinNode build(PlainSelect select) {
 
@@ -28,6 +31,7 @@ public class PlainSelectJoinTreeBuilder implements JoinTreeBuilder<PlainSelect> 
 
         JoinSelect currentNode = new JoinSelect();
 
+        //处理from到children
         if (select.getFromItem() instanceof Table) {
             JoinNode child = new JoinTable()
                     .setTable((Table) select.getFromItem())
@@ -42,6 +46,7 @@ public class PlainSelectJoinTreeBuilder implements JoinTreeBuilder<PlainSelect> 
             }
         }
 
+        //处理join到children
         if (select.getJoins() != null && select.getJoins().size() > 0) {
             for (int i = 0; i < select.getJoins().size(); i++) {
                 Join join = select.getJoins().get(i);
@@ -61,12 +66,13 @@ public class PlainSelectJoinTreeBuilder implements JoinTreeBuilder<PlainSelect> 
                     currentNode.getChildren().add(child);
                 }
 
+                //处理on到eq
                 if (join.getOnExpressions() != null && join.getOnExpressions().size() > 0) {
                     join.getOnExpressions().forEach(exp -> exp.accept(new ExpressionVisitorAdapter() {
                         @Override
                         public void visit(EqualsTo eq) {
                             if (eq.getLeftExpression() instanceof Column && eq.getRightExpression() instanceof Column) {
-                                currentNode.getEqs().add(eq);
+                                currentNode.getEqColumns().add(eq);
                             }
                         }
                     }));
@@ -81,17 +87,30 @@ public class PlainSelectJoinTreeBuilder implements JoinTreeBuilder<PlainSelect> 
                     .filter(item -> item instanceof AllColumns
                             || item instanceof AllTableColumns
                             || (item instanceof SelectExpressionItem && ((SelectExpressionItem) item).getExpression() instanceof Column))
+                            //TODO select 函数
                     .collect(Collectors.toList()));
         }
 
         //where
         if (select.getWhere() != null) {
+
+            //where InExpression
             select.getWhere().accept(new ExpressionVisitorAdapter() {
                 @Override
                 public void visit(EqualsTo eq) {
+                    //列=列
                     if (eq.getLeftExpression() instanceof Column && eq.getRightExpression() instanceof Column) {
-                        currentNode.getEqs().add(eq);
+                        currentNode.getEqColumns().add(eq);
                     }
+                    //列=子查询
+                    if (eq.getLeftExpression() instanceof Column && eq.getRightExpression() instanceof SubSelect) {
+                        currentNode.getEqSubSelect().add(eq);
+                    }
+                    //子查询=列
+                    if (eq.getLeftExpression() instanceof SubSelect && eq.getRightExpression() instanceof Column) {
+                        currentNode.getEqSubSelect().add(eq);
+                    }
+                    //TODO xxx=func()
                 }
             });
         }

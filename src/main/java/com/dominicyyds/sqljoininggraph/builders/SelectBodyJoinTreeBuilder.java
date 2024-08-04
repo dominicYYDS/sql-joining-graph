@@ -14,6 +14,9 @@ public class SelectBodyJoinTreeBuilder implements JoinTreeBuilder<SelectBody> {
 
     public static final SelectBodyJoinTreeBuilder INSTANCE = new SelectBodyJoinTreeBuilder();
 
+    /**
+     * 解析出JoinSelect或JoinUnion
+     */
     @Override
     public JoinNode build(SelectBody select) {
         if (select == null) {
