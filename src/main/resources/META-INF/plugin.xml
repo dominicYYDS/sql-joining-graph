@@ -5,19 +5,19 @@
     <vendor email="dominicyyds@163.com" url="https://sqljoininggraph.dominicyyds.com">dominicyyds</vendor>
 
     <description><![CDATA[
-      <h2>Overview</h2>
-      By scanning selected code for SQL strings, my tool generates a graph that shows the relationships of columns between tables based on join and where conditions in the SQL.
+      <h4>Overview</h4>
+      Scan sql string in project (java String field for now) and generate a svg image about column connections between tables, <br/>
+      base on where and join conditions in sql string.
       <br/>
-      <h2>Usage</h2>
-      Just right click at your source file or directory where contains sql string (only supporting java String field for now),
-      <br/>
-      and click <strong>'generate sql joining graph'</strong>.
-      <h2>Limitation</h2>
-      Only Scanning java String field for now.
+      <h4>Usage</h4>
+      Right click at your source file or directory where contains SQL STRING CONSTANTS<br/>
+      and select <strong>'Generate sql joining graph'</strong>.
+      <h4>Limitation</h4>
+      Only scanning java String field for now, other format coming soon...
     ]]></description>
 
     <change-notes><![CDATA[
-      Only Supporting java String field for now.
+      Only support java String field for now.
     ]]>
     </change-notes>
 
@@ -27,7 +27,7 @@
     <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->
     <depends>com.intellij.modules.platform</depends>
-<!--    <depends>com.intellij.modules.java</depends>-->
+    <depends>com.intellij.modules.java</depends>
     <depends>com.intellij.java</depends>
 
     <extensions defaultExtensionNs="com.intellij">
@@ -45,7 +45,7 @@
     <actions>
         <!-- Add your actions here -->
         <action class="com.dominicyyds.sqljoininggraph.SqlJoiningGraphAction"
-                text="generate sql joining graph">
+                text="Generate sql joining graph">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="AnalyzeMenu"/>
         </action>
     </actions>
