@@ -21,11 +21,11 @@ public class JoinSelectExtractor implements JoinEntryExtractor<JoinSelect> {
     @Override
     public Set<JoinEntry> extract(JoinSelect select) {
         Set<JoinEntry> result = new TreeSet<>(JoinEntry.COMPARATOR);
-        select.getEqColumns()
+        select.getColEqCols()
                 .stream()
                 .flatMap(on -> {
-                    Column left = (Column) on.getLeftExpression();
-                    Column right = (Column) on.getRightExpression();
+                    Column left = on.getLeft();
+                    Column right = on.getRight();
                     List<TableAndColumn> tcls = JoinSelectResolver.INSTANCE.resolve(select, left.getTable() == null ? null : left.getTable().getName(), left.getColumnName());
                     List<TableAndColumn> tcrs = JoinSelectResolver.INSTANCE.resolve(select, right.getTable() == null ? null : right.getTable().getName(), right.getColumnName());
                     return cross(tcls, tcrs);

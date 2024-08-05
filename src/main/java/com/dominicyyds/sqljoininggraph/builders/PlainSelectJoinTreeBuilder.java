@@ -3,6 +3,7 @@ package com.dominicyyds.sqljoininggraph.builders;
 import com.dominicyyds.sqljoininggraph.entity.JoinNode;
 import com.dominicyyds.sqljoininggraph.entity.JoinSelect;
 import com.dominicyyds.sqljoininggraph.entity.JoinTable;
+import com.dominicyyds.sqljoininggraph.entity.metadata.ColumnAndColumn;
 import com.dominicyyds.sqljoininggraph.entity.metadata.ColumnAndSubSelect;
 import com.dominicyyds.sqljoininggraph.enums.SubType;
 import com.intellij.openapi.diagnostic.Logger;
@@ -12,6 +13,7 @@ import net.sf.jsqlparser.expression.operators.relational.InExpression;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.*;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.util.stream.Collectors;
 
@@ -49,7 +51,7 @@ public class PlainSelectJoinTreeBuilder implements JoinTreeBuilder<PlainSelect> 
         }
 
         //处理join到children
-        if (select.getJoins() != null && select.getJoins().size() > 0) {
+        if (CollectionUtils.isNotEmpty(select.getJoins())) {
             for (int i = 0; i < select.getJoins().size(); i++) {
                 Join join = select.getJoins().get(i);
                 JoinNode child;
@@ -69,12 +71,12 @@ public class PlainSelectJoinTreeBuilder implements JoinTreeBuilder<PlainSelect> 
                 }
 
                 //处理on到eq
-                if (join.getOnExpressions() != null && join.getOnExpressions().size() > 0) {
+                if (CollectionUtils.isNotEmpty(join.getOnExpressions())) {
                     join.getOnExpressions().forEach(exp -> exp.accept(new ExpressionVisitorAdapter() {
                         @Override
                         public void visit(EqualsTo eq) {
                             if (eq.getLeftExpression() instanceof Column && eq.getRightExpression() instanceof Column) {
-                                currentNode.getEqColumns().add(eq);
+                                currentNode.getColEqCols().add(new ColumnAndColumn(eq.getLeftExpression(Column.class), eq.getRightExpression(Column.class)));
                             }
                         }
                     }));
@@ -83,7 +85,7 @@ public class PlainSelectJoinTreeBuilder implements JoinTreeBuilder<PlainSelect> 
         }
 
         //select的列
-        if (select.getSelectItems() != null && select.getSelectItems().size() > 0) {
+        if (CollectionUtils.isNotEmpty(select.getSelectItems())) {
             currentNode.getColumns().addAll(select.getSelectItems()
                     .stream()
                     .filter(item -> item instanceof AllColumns
@@ -113,7 +115,7 @@ public class PlainSelectJoinTreeBuilder implements JoinTreeBuilder<PlainSelect> 
                 public void visit(EqualsTo eq) {
                     //列=列
                     if (eq.getLeftExpression() instanceof Column && eq.getRightExpression() instanceof Column) {
-                        currentNode.getEqColumns().add(eq);
+                        currentNode.getColEqCols().add(new ColumnAndColumn(eq.getLeftExpression(Column.class), eq.getRightExpression(Column.class)));
                     }
                     //列=子查询
                     if (eq.getLeftExpression() instanceof Column && eq.getRightExpression() instanceof SubSelect) {
