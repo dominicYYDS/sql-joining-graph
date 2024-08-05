@@ -6,7 +6,6 @@ import com.dominicyyds.sqljoininggraph.entity.JoinNode;
 import com.dominicyyds.sqljoininggraph.entity.JoinSelect;
 import com.dominicyyds.sqljoininggraph.entity.TableAndColumn;
 import com.dominicyyds.sqljoininggraph.resolvers.JoinSelectResolver;
-import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 import net.sf.jsqlparser.statement.select.SubSelect;
@@ -33,36 +32,14 @@ public class JoinSelectExtractor implements JoinEntryExtractor<JoinSelect> {
                 })
                 .filter(Objects::nonNull)
                 .forEach(result::add);
-        select.getEqSubSelect()
+        select.getColEqSubs()
                 .stream()
-                .flatMap(eqSubSelect -> {
-                    Expression left = eqSubSelect.getLeftExpression();
-                    Expression right = eqSubSelect.getRightExpression();
-                    Column column = left instanceof Column ? (Column) left : (Column) right;
-                    SubSelect subSelect = left instanceof SubSelect ? (SubSelect) left : (SubSelect) right;
-                    JoinNode subTree = SelectBodyJoinTreeBuilder.INSTANCE.build(subSelect.getSelectBody());
-                    if (subTree instanceof JoinSelect) {
-                        JoinSelect mySubSelect = (JoinSelect) subTree;
-                        Column subSelectColumn = (Column) Optional.ofNullable(mySubSelect)
-                                .map(JoinSelect::getColumns)
-                                .filter(CollectionUtils::isNotEmpty)
-                                .filter(cols -> cols.size() == 1) //子查询只能select 1个列才能解析
-                                .map(cols -> cols.get(0))
-                                .filter(col -> col instanceof SelectExpressionItem)
-                                .map(col -> (SelectExpressionItem) col)
-                                .map(SelectExpressionItem::getExpression)
-                                .filter(col -> col instanceof Column)
-                                .orElse(null);
-                        if (subSelectColumn == null) {
-                            return Stream.empty();
-                        }
-                        List<TableAndColumn> tcls = JoinSelectResolver.INSTANCE.resolve(select, column.getTable() == null ? null : column.getTable().getName(), column.getColumnName());
-                        List<TableAndColumn> tcrs = JoinSelectResolver.INSTANCE.resolve(mySubSelect, subSelectColumn.getTable() == null ? null : subSelectColumn.getTable().getName(), subSelectColumn.getColumnName());
-                        return cross(tcls, tcrs);
-                    }
-                    //TODO 暂时支持一个select，后续支持union
-                    return Stream.empty();
-                })
+                .flatMap(eq -> extractColumnEqualsSubSelect(select, eq.getColumn(), eq.getSubSelect()))
+                .filter(Objects::nonNull)
+                .forEach(result::add);
+        select.getColInSubs()
+                .stream()
+                .flatMap(in -> extractColumnEqualsSubSelect(select, in.getColumn(), in.getSubSelect()))
                 .filter(Objects::nonNull)
                 .forEach(result::add);
         select.getChildren()
@@ -71,6 +48,30 @@ public class JoinSelectExtractor implements JoinEntryExtractor<JoinSelect> {
                 .map(child -> INSTANCE.extract((JoinSelect) child))
                 .forEach(result::addAll);
         return result;
+    }
+
+    private static Stream<JoinEntry> extractColumnEqualsSubSelect(JoinSelect currentSelect, Column column, SubSelect subSelect) {
+        JoinNode subTree = SelectBodyJoinTreeBuilder.INSTANCE.build(subSelect.getSelectBody());
+        if (subTree instanceof JoinSelect) {
+            JoinSelect mySubSelect = (JoinSelect) subTree;
+            Column subSelectColumn = (Column) Optional.ofNullable(mySubSelect)
+                    .map(JoinSelect::getColumns)
+                    .filter(CollectionUtils::isNotEmpty)
+                    .filter(cols -> cols.size() == 1) //子查询只能select 1个列才能解析
+                    .map(cols -> cols.get(0))
+                    .filter(col -> col instanceof SelectExpressionItem)
+                    .map(col -> (SelectExpressionItem) col)
+                    .map(SelectExpressionItem::getExpression)
+                    .filter(col -> col instanceof Column) // *、t.* 也解析不了，排除
+                    .orElse(null);
+            if (subSelectColumn == null) {
+                return Stream.empty();
+            }
+            List<TableAndColumn> tcls = JoinSelectResolver.INSTANCE.resolve(currentSelect, column.getTable() == null ? null : column.getTable().getName(), column.getColumnName());
+            List<TableAndColumn> tcrs = JoinSelectResolver.INSTANCE.resolve(mySubSelect, subSelectColumn.getTable() == null ? null : subSelectColumn.getTable().getName(), subSelectColumn.getColumnName());
+            return cross(tcls, tcrs);
+        }
+        return Stream.of();
     }
 
     private static Stream<JoinEntry> cross(List<TableAndColumn> tcls, List<TableAndColumn> tcrs) {

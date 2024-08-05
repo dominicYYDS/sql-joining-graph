@@ -3,10 +3,12 @@ package com.dominicyyds.sqljoininggraph.builders;
 import com.dominicyyds.sqljoininggraph.entity.JoinNode;
 import com.dominicyyds.sqljoininggraph.entity.JoinSelect;
 import com.dominicyyds.sqljoininggraph.entity.JoinTable;
+import com.dominicyyds.sqljoininggraph.entity.metadata.ColumnAndSubSelect;
 import com.dominicyyds.sqljoininggraph.enums.SubType;
 import com.intellij.openapi.diagnostic.Logger;
 import net.sf.jsqlparser.expression.ExpressionVisitorAdapter;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
+import net.sf.jsqlparser.expression.operators.relational.InExpression;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.*;
@@ -96,6 +98,17 @@ public class PlainSelectJoinTreeBuilder implements JoinTreeBuilder<PlainSelect> 
 
             //where InExpression
             select.getWhere().accept(new ExpressionVisitorAdapter() {
+
+                @Override
+                public void visit(InExpression in) {
+                    //列in子查询
+                    if (in.getLeftExpression() instanceof Column || in.getRightExpression() instanceof SubSelect) {
+                        currentNode.getColInSubs().add(new ColumnAndSubSelect(
+                                (Column) in.getLeftExpression(),
+                                (SubSelect) in.getRightExpression()));
+                    }
+                }
+
                 @Override
                 public void visit(EqualsTo eq) {
                     //列=列
@@ -104,11 +117,15 @@ public class PlainSelectJoinTreeBuilder implements JoinTreeBuilder<PlainSelect> 
                     }
                     //列=子查询
                     if (eq.getLeftExpression() instanceof Column && eq.getRightExpression() instanceof SubSelect) {
-                        currentNode.getEqSubSelect().add(eq);
+                        currentNode.getColInSubs().add(new ColumnAndSubSelect(
+                                (Column) eq.getLeftExpression(),
+                                (SubSelect) eq.getRightExpression()));
                     }
                     //子查询=列
                     if (eq.getLeftExpression() instanceof SubSelect && eq.getRightExpression() instanceof Column) {
-                        currentNode.getEqSubSelect().add(eq);
+                        currentNode.getColInSubs().add(new ColumnAndSubSelect(
+                                (Column) eq.getRightExpression(),
+                                (SubSelect) eq.getLeftExpression()));
                     }
                     //TODO xxx=func()
                 }
