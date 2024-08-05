@@ -2,16 +2,20 @@ package com.dominicyyds.sqljoininggraph.ui;
 
 import com.intellij.execution.util.EnvVariablesTable;
 import com.intellij.execution.util.EnvironmentVariable;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.ComponentValidator;
 import com.intellij.openapi.ui.TextComponentAccessor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.panels.VerticalLayout;
 import com.dominicyyds.sqljoininggraph.entity.SqlJoiningGraphSettings;
 import com.dominicyyds.sqljoininggraph.service.SqlJoiningGraphSettingsService;
 import com.dominicyyds.sqljoininggraph.utils.SettingsUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -37,6 +41,8 @@ public class GraphvizPropertyPanel extends JPanel {
     private final List<EnvironmentVariable> edgeProperties;
     private final Project project;
     private final SqlJoiningGraphSettingsService settingsService;
+
+    private static final String OUTPUT_FILE_REQUIRED = "Please select the location of output svg file.";
 
 
     public GraphvizPropertyPanel(Project project) {
@@ -80,6 +86,7 @@ public class GraphvizPropertyPanel extends JPanel {
         outputFileButton = new TextFieldWithBrowseButton();
         outputFileButton.addBrowseFolderListener("选择输出文件", "选择输出文件", null, FileChooserDescriptorFactory.createSingleFileOrFolderDescriptor(), TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
         outputFileButton.setText(Paths.get(project.getBasePath(), "sql-joining-graph.svg").toString());
+        makeRequired(OUTPUT_FILE_REQUIRED, outputFileButton);
         JBLabel outputFileLabel = new JBLabel("Choose Output File");
         outputFileLabel.setLabelFor(outputFileButton);
         add(outputFileLabel);
@@ -118,6 +125,26 @@ public class GraphvizPropertyPanel extends JPanel {
     private GraphvizPropertyDialog createDialog() {
         return new GraphvizPropertyDialog(project, this);
     }
+
+    private void makeRequired(String message, Disposable component) {
+        // Components initialization
+        new ComponentValidator(component).withValidator(() -> {
+                    if (StringUtils.isNotBlank(outputFileButton.getTextField().getText())) {
+                        return null;
+                    }
+                    return new ValidationInfo(message, outputFileButton);
+                })
+                .installOn(outputFileButton);
+        outputFileButton.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
+            @Override
+            protected void textChanged(@NotNull DocumentEvent e) {
+                ComponentValidator.getInstance(outputFileButton).ifPresent(ComponentValidator::revalidate);
+            }
+        });
+    }
+
+
+    //getter
 
     public GraphvizPropertyTextFieldWithBrowseButton getGraphButton() {
         return graphButton;
