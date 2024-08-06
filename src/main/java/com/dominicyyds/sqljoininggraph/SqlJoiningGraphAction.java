@@ -7,13 +7,13 @@ import com.dominicyyds.sqljoininggraph.service.SqlJoiningGraphSettingsService;
 import com.dominicyyds.sqljoininggraph.utils.ExtractUtil;
 import com.dominicyyds.sqljoininggraph.utils.GraphvizUtil;
 import com.intellij.ide.highlighter.JavaFileType;
-import com.intellij.ide.projectView.ProjectView;
 import com.intellij.notification.NotificationGroupManager;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -65,12 +66,22 @@ public class SqlJoiningGraphAction extends AnAction {
         try {
             SqlJoiningGraphSettingsService settingsService = event.getProject().getService(SqlJoiningGraphSettingsService.class);
             SqlJoiningGraphSettings settings = settingsService.getState();
-            GraphvizUtil.draw(joins, new File(settings.getOutputFile()), settings);
-            ProjectView.getInstance(event.getProject()).refresh();
-            NotificationGroupManager.getInstance()
-                    .getNotificationGroup("SqlJoiningGraph Notification Group")
-                    .createNotification(String.format("sql joining graph finished!! at %s", settings.getOutputFile()), NotificationType.INFORMATION)
-                    .notify(event.getProject());
+            File outputFile = new File(settings.getOutputFile());
+            long lastModified = !outputFile.exists() ? 0 : outputFile.lastModified();
+            GraphvizUtil.draw(joins, outputFile, settings);
+            if (outputFile.exists() && outputFile.lastModified() > lastModified) {
+                LocalFileSystem.getInstance().refreshIoFiles(Collections.singleton(outputFile));
+                NotificationGroupManager.getInstance()
+                        .getNotificationGroup("SqlJoiningGraph Notification Group")
+                        .createNotification(String.format("Generate sql joining graph success!! Please check the output file at %s", settings.getOutputFile()), NotificationType.INFORMATION)
+                        .notify(event.getProject());
+            } else {
+                NotificationGroupManager.getInstance()
+                        .getNotificationGroup("SqlJoiningGraph Notification Group")
+                        .createNotification("Generate sql joining graph fail!!", NotificationType.ERROR)
+                        .notify(event.getProject());
+            }
+
         } catch (IOException e) {
             NotificationGroupManager.getInstance()
                     .getNotificationGroup("SqlJoiningGraph Notification Group")
