@@ -12,6 +12,7 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -31,10 +32,48 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-public class SqlJoiningGraphAction extends AnAction {
 
-    private static final Logger log = Logger.getInstance(SqlJoiningGraphAction.class);
+public class GenerateFromJavaFileAction extends AnAction {
+
+    private static final Logger log = Logger.getInstance(GenerateFromJavaFileAction.class);
+
+
+    /**
+     * 如果右键文件夹或文件包含java文件才展示
+     */
+    @Override
+    public void update(@NotNull AnActionEvent event) {
+        VirtualFile fileSelected = event.getData(CommonDataKeys.VIRTUAL_FILE);
+        Presentation presentation = event.getPresentation();
+
+        if (fileSelected == null) {
+            presentation.setEnabledAndVisible(false);
+            return;
+        }
+        if (fileSelected.getFileType() instanceof JavaFileType) {
+            presentation.setEnabledAndVisible(true);
+            return;
+        }
+        AtomicBoolean hasJavaFile = new AtomicBoolean(false);
+        VfsUtilCore.iterateChildrenRecursively(fileSelected, f -> true, fileOrDir -> {
+            if (fileOrDir.isDirectory()) {
+                return true;
+            }
+            if (fileOrDir.getFileType() instanceof JavaFileType) {
+                hasJavaFile.set(true);
+                return false;
+            }
+            return true;
+        });
+
+        if (hasJavaFile.get()) {
+            presentation.setEnabledAndVisible(true);
+        } else {
+            presentation.setEnabledAndVisible(false);
+        }
+    }
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent event) {

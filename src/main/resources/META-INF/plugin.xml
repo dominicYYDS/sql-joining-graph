@@ -44,7 +44,7 @@
 
     <actions>
         <!-- Add your actions here -->
-        <action class="com.dominicyyds.sqljoininggraph.SqlJoiningGraphAction"
+        <action class="com.dominicyyds.sqljoininggraph.GenerateFromJavaFileAction"
                 text="Generate sql joining graph">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="AnalyzeMenu"/>
         </action>
