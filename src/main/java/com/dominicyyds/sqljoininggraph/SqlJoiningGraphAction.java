@@ -7,6 +7,7 @@ import com.dominicyyds.sqljoininggraph.service.SqlJoiningGraphSettingsService;
 import com.dominicyyds.sqljoininggraph.utils.ExtractUtil;
 import com.dominicyyds.sqljoininggraph.utils.GraphvizUtil;
 import com.intellij.ide.highlighter.JavaFileType;
+import com.intellij.ide.projectView.ProjectView;
 import com.intellij.notification.NotificationGroupManager;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -65,6 +66,7 @@ public class SqlJoiningGraphAction extends AnAction {
             SqlJoiningGraphSettingsService settingsService = event.getProject().getService(SqlJoiningGraphSettingsService.class);
             SqlJoiningGraphSettings settings = settingsService.getState();
             GraphvizUtil.draw(joins, new File(settings.getOutputFile()), settings);
+            ProjectView.getInstance(event.getProject()).refresh();
             NotificationGroupManager.getInstance()
                     .getNotificationGroup("SqlJoiningGraph Notification Group")
                     .createNotification(String.format("sql joining graph finished!! at %s", settings.getOutputFile()), NotificationType.INFORMATION)
