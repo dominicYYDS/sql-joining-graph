@@ -1,5 +1,6 @@
 package com.dominicyyds.sqljoininggraph;
 
+import com.dominicyyds.sqljoininggraph.compatibility.NotificationAdapter;
 import com.dominicyyds.sqljoininggraph.computers.PsiJavaFileStringConstComputer;
 import com.dominicyyds.sqljoininggraph.entity.JoinEntry;
 import com.dominicyyds.sqljoininggraph.entity.SqlJoiningGraphSettings;
@@ -7,7 +8,6 @@ import com.dominicyyds.sqljoininggraph.service.SqlJoiningGraphSettingsService;
 import com.dominicyyds.sqljoininggraph.utils.ExtractUtil;
 import com.dominicyyds.sqljoininggraph.utils.GraphvizUtil;
 import com.intellij.ide.highlighter.JavaFileType;
-import com.intellij.notification.NotificationGroupManager;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -34,7 +34,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.dominicyyds.sqljoininggraph.constants.MyConstants.NOTIFICATION_GROUP;
 import static com.dominicyyds.sqljoininggraph.constants.MyConstants.NOTIFICATION_TITLE;
 
 
@@ -86,10 +85,7 @@ public class GenerateFromJavaFileAction extends AnAction {
             return;
         }
 
-        NotificationGroupManager.getInstance()
-                .getNotificationGroup("SqlJoiningGraph Notification Group")
-                .createNotification("Start generating table diagram!! Please wait a few...", NotificationType.INFORMATION)
-                .notify(event.getProject());
+        NotificationAdapter.getInstance(event.getProject()).notify(NOTIFICATION_TITLE, "Start generating table diagram!! Please wait a few...", NotificationType.INFORMATION);
 
         Set<JoinEntry> joins = new TreeSet<>(JoinEntry.COMPARATOR);
         VfsUtilCore.iterateChildrenRecursively(fileSelected, f -> true, fileOrDir -> {
@@ -106,10 +102,7 @@ public class GenerateFromJavaFileAction extends AnAction {
         });
 
         if (joins.isEmpty()) {
-            NotificationGroupManager.getInstance()
-                    .getNotificationGroup(NOTIFICATION_GROUP)
-                    .createNotification(NOTIFICATION_TITLE, "sorry, no column connection detected or sql grammar not support for now.", NotificationType.WARNING)
-                    .notify(event.getProject());
+            NotificationAdapter.getInstance(event.getProject()).notify(NOTIFICATION_TITLE, "sorry, no column connection detected or sql grammar not support for now.", NotificationType.WARNING);
             return;
         }
 
@@ -121,22 +114,13 @@ public class GenerateFromJavaFileAction extends AnAction {
             GraphvizUtil.draw(joins, outputFile, settings);
             if (outputFile.exists() && outputFile.lastModified() > lastModified) {
                 LocalFileSystem.getInstance().refreshIoFiles(Collections.singleton(outputFile));
-                NotificationGroupManager.getInstance()
-                        .getNotificationGroup(NOTIFICATION_GROUP)
-                        .createNotification(NOTIFICATION_TITLE, String.format("generate graph success!! please check the output file at %s", settings.getOutputFile()), NotificationType.INFORMATION)
-                        .notify(event.getProject());
+                NotificationAdapter.getInstance(event.getProject()).notify(NOTIFICATION_TITLE, String.format("generate graph success!! please check the output file at %s", settings.getOutputFile()), NotificationType.INFORMATION);
             } else {
-                NotificationGroupManager.getInstance()
-                        .getNotificationGroup(NOTIFICATION_GROUP)
-                        .createNotification(NOTIFICATION_TITLE, "generate graph fail!!", NotificationType.ERROR)
-                        .notify(event.getProject());
+                NotificationAdapter.getInstance(event.getProject()).notify(NOTIFICATION_TITLE, "generate graph fail!!", NotificationType.ERROR);
             }
 
         } catch (IOException e) {
-            NotificationGroupManager.getInstance()
-                    .getNotificationGroup(NOTIFICATION_GROUP)
-                    .createNotification(NOTIFICATION_TITLE, String.format("sql joining graph error: %s", e.getLocalizedMessage()), NotificationType.ERROR)
-                    .notify(event.getProject());
+            NotificationAdapter.getInstance(event.getProject()).notify(NOTIFICATION_TITLE, String.format("sql joining graph error: %s", e.getLocalizedMessage()), NotificationType.ERROR);
             throw new RuntimeException(e);
         }
     }
