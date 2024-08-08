@@ -92,7 +92,9 @@ signPlugin {
 publishPlugin {
     token = providers.environmentVariable("PUBLISH_TOKEN").getOrNull()
 }
-
+buildSearchableOptions {
+    jvmArgs = ['-Dfile.encoding=UTF-8', '-XX:+IgnoreUnrecognizedVMOptions']
+}
 test {
     useJUnitPlatform()
 }
