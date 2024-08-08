@@ -1,7 +1,6 @@
 package com.dominicyyds.sqljoininggraph.compatibility;
 
-import com.intellij.notification.NotificationGroupManager;
-import com.intellij.notification.NotificationType;
+import com.intellij.notification.*;
 import com.intellij.openapi.project.Project;
 
 import static com.dominicyyds.sqljoininggraph.constants.MyConstants.NOTIFICATION_GROUP;
@@ -19,10 +18,9 @@ public class NotificationAdapter {
     }
 
     public void notify(String title, String content, NotificationType type) {
-        NotificationGroupManager.getInstance()
-                .getNotificationGroup(NOTIFICATION_GROUP)
-                .createNotification(title, null, content, type)
-                .notify(project);
+        NotificationGroup group = new NotificationGroup(NOTIFICATION_GROUP, NotificationDisplayType.BALLOON);
+        Notification notification = group.createNotification(title, null, content, type);
+        Notifications.Bus.notify(notification, project);
     }
 
 }

@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Paths;
 
-@Service(Service.Level.PROJECT)
+@Service
 @State(name = "sql-joining-graph", storages = @Storage("sql-joining-graph.xml"))
 public class SqlJoiningGraphSettingsService implements PersistentStateComponent<SqlJoiningGraphSettings> {
 
