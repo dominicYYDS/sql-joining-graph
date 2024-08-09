@@ -8,3 +8,4 @@ build
 .sandbox
 *.crt
 *.pem
+.run
