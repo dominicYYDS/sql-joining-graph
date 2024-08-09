@@ -5,19 +5,33 @@
     <vendor email="dominicyyds@163.com" url="https://sqljoininggraph.dominicyyds.com">dominicyyds</vendor>
 
     <description><![CDATA[
-      <h4>Overview</h4>
-      Scan sql string in project (java String field for now) and generate a svg image about column connections between tables, <br/>
-      base on where and join conditions in sql string.
-      <br/>
-      <h4>Usage</h4>
-      Right click at your source file or directory where contains SQL STRING CONSTANTS<br/>
-      and select <strong>'Generate sql joining graph'</strong>.
-      <h4>Limitation</h4>
-      Only scanning java String field for now, other format coming soon...
+        <h4>Overview</h4>
+        Scan sql string in project (java String field for now) and generate a svg image about column connections between tables, <br/>
+        base on where and join conditions in sql string.
+
+        <h4>Usage</h4>
+        <ol>
+            <li><strong>Config</strong> the output svg file location in the 'sql-joining-graph' tool window at right side.</li>
+            <li><strong>Right click</strong> at your source file or directory where contains SQL STRING CONSTANTS<br/>
+                and <strong>Select 'Generate sql joining graph'</strong>.</li>
+            <li>A svg file illerstrating column connections would be generated at the location you choosed.</li>
+        </ol>
+
+        <h4>Limitation</h4>
+        <ul>
+            <li>Only scanning java String field for now, other format coming soon...</li>
+        </ul>
     ]]></description>
 
     <change-notes><![CDATA[
-      Only support java String field for now.
+        <ul>
+            <li>
+                <strong>1.0.0</strong>
+                <ul>
+                    <li>supporting scanning sql constants in java String field.</li>
+                </ul>
+            </li>
+        </ul>
     ]]>
     </change-notes>
 
