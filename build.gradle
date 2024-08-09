@@ -90,6 +90,7 @@ signPlugin {
     password = providers.environmentVariable("PRIVATE_KEY_PASSWORD").getOrNull()
 }
 publishPlugin {
+    distributionFile = file('build/distributions/sql-joining-graph-1.0.0-202-signed.zip')
     token = providers.environmentVariable("PUBLISH_TOKEN").getOrNull()
 }
 buildSearchableOptions {
