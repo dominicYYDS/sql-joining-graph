@@ -14,7 +14,7 @@
             <li><strong>Config</strong> the output svg file location in the 'sql-joining-graph' tool window at right side.</li>
             <li><strong>Right click</strong> at your source file or directory where contains SQL STRING CONSTANTS<br/>
                 and <strong>Select 'Generate sql joining graph'</strong>.</li>
-            <li>A svg file illerstrating column connections would be generated at the location you choosed.</li>
+            <li>A svg file illustrating column connections would be generated at the location you choosed.</li>
         </ol>
 
         <h4>Limitation</h4>
