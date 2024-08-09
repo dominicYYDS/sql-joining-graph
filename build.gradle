@@ -47,7 +47,7 @@ repositories {
 }
 
 group 'com.dominicyyds'
-version '1.0.0-201'
+version '1.0.0-202'
 
 
 compileJava {
@@ -68,7 +68,7 @@ dependencies {
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
-    localPath = 'E:\\idea\\ideaIC-2020.1.1.win'
+    localPath = 'E:\\idea\\ideaIC-2020.2.1.win'
 //    localPath = 'C:\\Program Files\\JetBrains\\IntelliJ IDEA Community Edition 2021.3.1'
     //会自动引入dependencies依赖
     downloadSources = true
@@ -77,7 +77,7 @@ intellij {
 //    version = '2020.1.1'
     type = 'IC'
 
-    sandboxDir = './.sandbox/201.1'
+    sandboxDir = './.sandbox/202.1'
 }
 
 runIde {

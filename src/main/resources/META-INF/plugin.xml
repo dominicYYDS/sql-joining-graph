@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>sql-joining-graph</id>
     <name>SqlJoiningGraph</name>
-    <version>1.0.0-201</version>
+    <version>1.0.0-202</version>
     <vendor email="dominicyyds@163.com" url="https://sqljoininggraph.dominicyyds.com">dominicyyds</vendor>
 
     <description><![CDATA[
@@ -22,7 +22,7 @@
     </change-notes>
 
     <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-    <idea-version since-build="201.*" until-build="201.*"/>
+    <idea-version since-build="202.*" until-build="202.*"/>
 
     <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->
