@@ -48,10 +48,12 @@ repositories {
 
 group 'com.dominicyyds'
 version '1.0.0-211-221'
-sourceCompatibility = 11
-targetCompatibility = 11
 
-tasks.compileJava.options.encoding = 'UTF-8'
+compileJava {
+    options.encoding = 'UTF-8'
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
 
 dependencies {
     implementation 'com.github.jsqlparser:jsqlparser:4.6'
