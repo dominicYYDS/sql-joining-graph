@@ -47,11 +47,14 @@ repositories {
 }
 
 group 'com.dominicyyds'
-version '1.0.0-SNAPSHOT'
-sourceCompatibility = 11
-targetCompatibility = 11
+version '1.0.0-203'
 
-tasks.compileJava.options.encoding = 'UTF-8'
+
+compileJava {
+    options.encoding = 'UTF-8'
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
 
 dependencies {
     implementation 'com.github.jsqlparser:jsqlparser:4.6'
@@ -65,12 +68,20 @@ dependencies {
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
+    localPath = 'E:\\idea\\ideaIC-2020.3.4.win'
 //    localPath = 'C:\\Program Files\\JetBrains\\IntelliJ IDEA Community Edition 2021.3.1'
     //会自动引入dependencies依赖
+    downloadSources = true
+//    plugins = ['java', 'com.chrisrm.idea.MaterialThemeUI:4.12']
     plugins = ['java']
-    version = '2020.3.1'
+//    version = '2020.1.1'
     type = 'IC'
-    sandboxDir = './.sandbox'
+
+    sandboxDir = './.sandbox/203.4'
+}
+
+runIde {
+    jvmArgs = ['-Dfile.encoding=UTF-8', '-XX:+IgnoreUnrecognizedVMOptions']
 }
 
 signPlugin {
@@ -81,7 +92,9 @@ signPlugin {
 publishPlugin {
     token = providers.environmentVariable("PUBLISH_TOKEN").getOrNull()
 }
-
+buildSearchableOptions {
+    jvmArgs = ['-Dfile.encoding=UTF-8', '-XX:+IgnoreUnrecognizedVMOptions']
+}
 test {
     useJUnitPlatform()
 }
