@@ -72,7 +72,6 @@ intellij {
 //    localPath = 'C:\\Program Files\\JetBrains\\IntelliJ IDEA Community Edition 2021.3.1'
     //会自动引入dependencies依赖
     downloadSources = true
-//    plugins = ['java', 'com.chrisrm.idea.MaterialThemeUI:4.12']
     plugins = ['java']
 //    version = '2020.1.1'
     type = 'IC'
@@ -90,7 +89,7 @@ signPlugin {
     password = providers.environmentVariable("PRIVATE_KEY_PASSWORD").getOrNull()
 }
 publishPlugin {
-    distributionFile = file('build/distributions/sql-joining-graph-1.0.0-202-signed.zip')
+    distributionFile = tasks.signPlugin.outputArchiveFile
     token = providers.environmentVariable("PUBLISH_TOKEN").getOrNull()
 }
 buildSearchableOptions {
