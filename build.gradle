@@ -47,7 +47,7 @@ repositories {
 }
 
 group 'com.dominicyyds'
-version '1.0.0-SNAPSHOT'
+version '1.0.0-211-221'
 sourceCompatibility = 11
 targetCompatibility = 11
 
