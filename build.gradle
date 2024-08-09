@@ -79,6 +79,7 @@ signPlugin {
     password = providers.environmentVariable("PRIVATE_KEY_PASSWORD").getOrNull()
 }
 publishPlugin {
+    distributionFile = tasks.signPlugin.outputArchiveFile
     token = providers.environmentVariable("PUBLISH_TOKEN").getOrNull()
 }
 
