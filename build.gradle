@@ -47,12 +47,12 @@ repositories {
 }
 
 group 'com.dominicyyds'
-version '1.0.0-212-221'
+version '1.0.0-222-241.6'
 
 compileJava {
     options.encoding = 'UTF-8'
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 dependencies {
@@ -67,7 +67,7 @@ dependencies {
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
-    localPath = 'E:\\idea\\ideaIC-2022.1.4.win'
+    localPath = 'E:\\idea\\ideaIC-2024.1.6.win'
 //    localPath = 'C:\\Program Files\\JetBrains\\IntelliJ IDEA Community Edition 2021.3.1'
     //会自动引入dependencies依赖
     downloadSources = true
@@ -75,11 +75,7 @@ intellij {
 //    version = '2020.1.1'
     type = 'IC'
 
-    sandboxDir = './.sandbox/221.4'
-}
-
-runIde {
-    jvmArgs = ['-Dfile.encoding=UTF-8', '-XX:+IgnoreUnrecognizedVMOptions']
+    sandboxDir = './.sandbox/241.6'
 }
 
 signPlugin {
@@ -91,9 +87,7 @@ publishPlugin {
     distributionFile = tasks.signPlugin.outputArchiveFile
     token = providers.environmentVariable("PUBLISH_TOKEN").getOrNull()
 }
-buildSearchableOptions {
-    jvmArgs = ['-Dfile.encoding=UTF-8', '-XX:+IgnoreUnrecognizedVMOptions']
-}
+
 test {
     useJUnitPlatform()
 }
