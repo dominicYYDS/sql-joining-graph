@@ -21,7 +21,7 @@ public class NotificationAdapter {
     public void notify(String title, String content, NotificationType type) {
         NotificationGroupManager.getInstance()
                 .getNotificationGroup(NOTIFICATION_GROUP)
-                .createNotification(title, null, content, type)
+                .createNotification(title, content, type)
                 .notify(project);
     }
 
