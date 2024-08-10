@@ -67,12 +67,19 @@ dependencies {
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
+    localPath = 'E:\\idea\\ideaIC-2022.1.4.win'
 //    localPath = 'C:\\Program Files\\JetBrains\\IntelliJ IDEA Community Edition 2021.3.1'
     //会自动引入dependencies依赖
+    downloadSources = true
     plugins = ['java']
-    version = '2020.3.1'
+//    version = '2020.1.1'
     type = 'IC'
-    sandboxDir = './.sandbox'
+
+    sandboxDir = './.sandbox/221.4'
+}
+
+runIde {
+    jvmArgs = ['-Dfile.encoding=UTF-8', '-XX:+IgnoreUnrecognizedVMOptions']
 }
 
 signPlugin {
@@ -84,7 +91,9 @@ publishPlugin {
     distributionFile = tasks.signPlugin.outputArchiveFile
     token = providers.environmentVariable("PUBLISH_TOKEN").getOrNull()
 }
-
+buildSearchableOptions {
+    jvmArgs = ['-Dfile.encoding=UTF-8', '-XX:+IgnoreUnrecognizedVMOptions']
+}
 test {
     useJUnitPlatform()
 }
