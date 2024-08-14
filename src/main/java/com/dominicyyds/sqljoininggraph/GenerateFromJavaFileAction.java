@@ -7,6 +7,7 @@ import com.dominicyyds.sqljoininggraph.entity.SqlJoiningGraphSettings;
 import com.dominicyyds.sqljoininggraph.service.SqlJoiningGraphSettingsService;
 import com.dominicyyds.sqljoininggraph.utils.ExtractUtil;
 import com.dominicyyds.sqljoininggraph.utils.GraphvizUtil;
+import com.dominicyyds.sqljoininggraph.utils.SqlJoiningGraphBundle;
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -85,7 +86,7 @@ public class GenerateFromJavaFileAction extends AnAction {
             return;
         }
 
-        NotificationAdapter.getInstance(event.getProject()).notify(NOTIFICATION_TITLE, "Start generating table diagram!! Please wait a few...", NotificationType.INFORMATION);
+        NotificationAdapter.getInstance(event.getProject()).notify(NotificationType.INFORMATION, NOTIFICATION_TITLE, SqlJoiningGraphBundle.GENERATE_START);
 
         Set<JoinEntry> joins = new TreeSet<>(JoinEntry.COMPARATOR);
         VfsUtilCore.iterateChildrenRecursively(fileSelected, f -> true, fileOrDir -> {
@@ -102,7 +103,7 @@ public class GenerateFromJavaFileAction extends AnAction {
         });
 
         if (joins.isEmpty()) {
-            NotificationAdapter.getInstance(event.getProject()).notify(NOTIFICATION_TITLE, "sorry, no column connection detected or sql grammar not support for now.", NotificationType.WARNING);
+            NotificationAdapter.getInstance(event.getProject()).notify(NotificationType.WARNING, NOTIFICATION_TITLE, SqlJoiningGraphBundle.GENERATE_EMPTY);
             return;
         }
 
@@ -114,13 +115,13 @@ public class GenerateFromJavaFileAction extends AnAction {
             GraphvizUtil.draw(joins, outputFile, settings);
             if (outputFile.exists() && outputFile.lastModified() > lastModified) {
                 LocalFileSystem.getInstance().refreshIoFiles(Collections.singleton(outputFile));
-                NotificationAdapter.getInstance(event.getProject()).notify(NOTIFICATION_TITLE, String.format("generate graph success!! please check the output file at %s", settings.getOutputFile()), NotificationType.INFORMATION);
+                NotificationAdapter.getInstance(event.getProject()).notify(NotificationType.INFORMATION, NOTIFICATION_TITLE, SqlJoiningGraphBundle.GENERATE_SUCCESS, settings.getOutputFile());
             } else {
-                NotificationAdapter.getInstance(event.getProject()).notify(NOTIFICATION_TITLE, "generate graph fail!!", NotificationType.ERROR);
+                NotificationAdapter.getInstance(event.getProject()).notify(NotificationType.ERROR, NOTIFICATION_TITLE, SqlJoiningGraphBundle.GENERATE_FAIL_UNKNOWN);
             }
 
         } catch (IOException e) {
-            NotificationAdapter.getInstance(event.getProject()).notify(NOTIFICATION_TITLE, String.format("sql joining graph error: %s", e.getLocalizedMessage()), NotificationType.ERROR);
+            NotificationAdapter.getInstance(event.getProject()).notify(NotificationType.ERROR, NOTIFICATION_TITLE, SqlJoiningGraphBundle.GENERATE_FAIL, e.getLocalizedMessage());
             throw new RuntimeException(e);
         }
     }
