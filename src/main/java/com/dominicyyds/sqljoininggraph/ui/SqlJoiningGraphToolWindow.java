@@ -6,6 +6,7 @@ import com.dominicyyds.sqljoininggraph.service.Printer;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.components.JBTabbedPane;
 
+import javax.swing.*;
 import java.util.Collection;
 
 
@@ -24,8 +25,8 @@ public class SqlJoiningGraphToolWindow extends JBTabbedPane implements Printer {
         graphvizPanel = new GraphvizPanel(project);
         detailTab = new DetailPanel(project);
 
-        insertTab("Settings", null, settingsTab, null, 0);
-        insertTab("Image", null, graphvizPanel, null, 1);
+//        insertTab("Settings", null, settingsTab, null, 0);
+        insertTab("Image", null, graphvizPanel, null, 0);
 //        insertTab("Detail", null, detailTab, null, 2);
 
         project.getService(OutputService.class).registerPrinter(this);
@@ -33,6 +34,6 @@ public class SqlJoiningGraphToolWindow extends JBTabbedPane implements Printer {
 
     @Override
     public void printJoinEntries(Collection<JoinEntry> joinEntries) {
-        this.setSelectedComponent(graphvizPanel);
+        SwingUtilities.invokeLater(() -> setSelectedComponent(graphvizPanel));
     }
 }

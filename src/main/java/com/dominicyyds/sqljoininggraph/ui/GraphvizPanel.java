@@ -18,6 +18,7 @@ import guru.nidi.graphviz.engine.Graphviz;
 import guru.nidi.graphviz.model.MutableGraph;
 import guru.nidi.graphviz.model.MutableNode;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
@@ -95,9 +96,11 @@ public class GraphvizPanel extends JBPanel<DetailPanel> implements Printer {
                 .notValidating()
                 .render(Format.SVG)
                 .toImage();
-        clear();
-        JBScrollPane scrollPane = new JBScrollPane(new JBLabel(new JBImageIcon(image)));
-        add(scrollPane, BorderLayout.CENTER);
+        SwingUtilities.invokeLater(() -> {
+            clear();
+            JBScrollPane scrollPane = new JBScrollPane(new JBLabel(new JBImageIcon(image)));
+            add(scrollPane, BorderLayout.CENTER);
+        });
         Thread.currentThread().setContextClassLoader(origin);
     }
 }
