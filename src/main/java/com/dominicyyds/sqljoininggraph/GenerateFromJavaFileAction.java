@@ -4,6 +4,7 @@ import com.dominicyyds.sqljoininggraph.compatibility.NotificationAdapter;
 import com.dominicyyds.sqljoininggraph.computers.PsiJavaFileStringConstComputer;
 import com.dominicyyds.sqljoininggraph.entity.JoinEntry;
 import com.dominicyyds.sqljoininggraph.entity.SqlJoiningGraphSettings;
+import com.dominicyyds.sqljoininggraph.service.OutputService;
 import com.dominicyyds.sqljoininggraph.service.SqlJoiningGraphSettingsService;
 import com.dominicyyds.sqljoininggraph.utils.ExtractUtil;
 import com.dominicyyds.sqljoininggraph.utils.GraphvizUtil;
@@ -112,8 +113,14 @@ public class GenerateFromJavaFileAction extends AnAction {
             File outputFile = new File(settings.getOutputFile());
             long lastModified = !outputFile.exists() ? 0 : outputFile.lastModified();
             GraphvizUtil.draw(joins, outputFile, settings);
+
+            //输出到toolwindow
+            OutputService outputService = event.getProject().getService(OutputService.class);
+            outputService.printJoinEntries(joins);
+
             if (outputFile.exists() && outputFile.lastModified() > lastModified) {
                 LocalFileSystem.getInstance().refreshIoFiles(Collections.singleton(outputFile));
+
                 NotificationAdapter.getInstance(event.getProject()).notify(NOTIFICATION_TITLE, String.format("generate graph success!! please check the output file at %s", settings.getOutputFile()), NotificationType.INFORMATION);
             } else {
                 NotificationAdapter.getInstance(event.getProject()).notify(NOTIFICATION_TITLE, "generate graph fail!!", NotificationType.ERROR);

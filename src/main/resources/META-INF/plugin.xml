@@ -50,6 +50,7 @@
         <toolWindow id="sql-joining-graph" anchor="right" factoryClass="com.dominicyyds.sqljoininggraph.ui.SqlJoiningGraphToolWindowFactory" />
 
         <projectService serviceImplementation="com.dominicyyds.sqljoininggraph.service.SqlJoiningGraphSettingsService"/>
+        <projectService serviceImplementation="com.dominicyyds.sqljoininggraph.service.OutputService"/>
 
         <notificationGroup id="SqlJoiningGraph Notification Group"
                            displayType="BALLOON"
