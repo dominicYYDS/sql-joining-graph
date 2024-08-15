@@ -67,7 +67,7 @@ dependencies {
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
-    localPath = 'E:\\idea\\ideaIC-2024.1.6.win'
+    localPath = 'E:\\idea\\cache\\ideaIC-2024.1.6'
 //    localPath = 'C:\\Program Files\\JetBrains\\IntelliJ IDEA Community Edition 2021.3.1'
     //会自动引入dependencies依赖
     downloadSources = true
