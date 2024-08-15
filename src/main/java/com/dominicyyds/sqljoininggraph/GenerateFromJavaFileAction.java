@@ -7,10 +7,7 @@ import com.dominicyyds.sqljoininggraph.service.OutputService;
 import com.dominicyyds.sqljoininggraph.utils.ExtractUtil;
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.notification.NotificationType;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -106,6 +103,11 @@ public class GenerateFromJavaFileAction extends AnAction {
             NotificationAdapter.getInstance(event.getProject()).notify(NOTIFICATION_TITLE, String.format("sorry, something error occurs: %s", e.getLocalizedMessage()), NotificationType.ERROR);
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public @NotNull ActionUpdateThread getActionUpdateThread() {
+        return ActionUpdateThread.BGT;
     }
 
     private Set<JoinEntry> extract(String sql) {
