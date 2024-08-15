@@ -3,10 +3,8 @@ package com.dominicyyds.sqljoininggraph;
 import com.dominicyyds.sqljoininggraph.compatibility.NotificationAdapter;
 import com.dominicyyds.sqljoininggraph.computers.PsiJavaFileStringConstComputer;
 import com.dominicyyds.sqljoininggraph.entity.JoinEntry;
-import com.dominicyyds.sqljoininggraph.entity.SqlJoiningGraphSettings;
-import com.dominicyyds.sqljoininggraph.service.SqlJoiningGraphSettingsService;
+import com.dominicyyds.sqljoininggraph.service.OutputService;
 import com.dominicyyds.sqljoininggraph.utils.ExtractUtil;
-import com.dominicyyds.sqljoininggraph.utils.GraphvizUtil;
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -14,7 +12,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -26,9 +23,6 @@ import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.Select;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -85,8 +79,6 @@ public class GenerateFromJavaFileAction extends AnAction {
             return;
         }
 
-        NotificationAdapter.getInstance(event.getProject()).notify(NOTIFICATION_TITLE, "Start generating table diagram!! Please wait a few...", NotificationType.INFORMATION);
-
         Set<JoinEntry> joins = new TreeSet<>(JoinEntry.COMPARATOR);
         VfsUtilCore.iterateChildrenRecursively(fileSelected, f -> true, fileOrDir -> {
             if (fileOrDir.isDirectory() || !(fileOrDir.getFileType() instanceof JavaFileType)) {
@@ -107,20 +99,11 @@ public class GenerateFromJavaFileAction extends AnAction {
         }
 
         try {
-            SqlJoiningGraphSettingsService settingsService = event.getProject().getService(SqlJoiningGraphSettingsService.class);
-            SqlJoiningGraphSettings settings = settingsService.getState();
-            File outputFile = new File(settings.getOutputFile());
-            long lastModified = !outputFile.exists() ? 0 : outputFile.lastModified();
-            GraphvizUtil.draw(joins, outputFile, settings);
-            if (outputFile.exists() && outputFile.lastModified() > lastModified) {
-                LocalFileSystem.getInstance().refreshIoFiles(Collections.singleton(outputFile));
-                NotificationAdapter.getInstance(event.getProject()).notify(NOTIFICATION_TITLE, String.format("generate graph success!! please check the output file at %s", settings.getOutputFile()), NotificationType.INFORMATION);
-            } else {
-                NotificationAdapter.getInstance(event.getProject()).notify(NOTIFICATION_TITLE, "generate graph fail!!", NotificationType.ERROR);
-            }
-
-        } catch (IOException e) {
-            NotificationAdapter.getInstance(event.getProject()).notify(NOTIFICATION_TITLE, String.format("sql joining graph error: %s", e.getLocalizedMessage()), NotificationType.ERROR);
+            //输出到toolwindow
+            OutputService outputService = event.getProject().getService(OutputService.class);
+            outputService.printJoinEntries(joins);
+        } catch (Exception e) {
+            NotificationAdapter.getInstance(event.getProject()).notify(NOTIFICATION_TITLE, String.format("sorry, something error occurs: %s", e.getLocalizedMessage()), NotificationType.ERROR);
             throw new RuntimeException(e);
         }
     }
