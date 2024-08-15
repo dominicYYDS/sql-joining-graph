@@ -16,7 +16,7 @@ public class SqlJoiningGraphToolWindowFactory implements ToolWindowFactory {
 
         VerticalLayout layout = new VerticalLayout(10);
         JPanel whole = new JPanel(layout);
-        whole.add(new SqlJoiningGraphToolWindow(project));
+        whole.add(new SqlJoiningGraphToolWindow(project, toolWindow));
 
         Content content = toolWindow.getContentManager().getFactory().createContent(whole, null, true);
         toolWindow.getContentManager().addContent(content);

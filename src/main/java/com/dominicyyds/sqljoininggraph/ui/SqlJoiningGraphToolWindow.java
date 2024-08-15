@@ -3,10 +3,11 @@ package com.dominicyyds.sqljoininggraph.ui;
 import com.dominicyyds.sqljoininggraph.entity.JoinEntry;
 import com.dominicyyds.sqljoininggraph.service.OutputService;
 import com.dominicyyds.sqljoininggraph.service.Printer;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.components.JBTabbedPane;
 
-import javax.swing.*;
 import java.util.Collection;
 
 
@@ -17,9 +18,11 @@ public class SqlJoiningGraphToolWindow extends JBTabbedPane implements Printer {
     private final GraphvizPropertyPanel settingsTab;
     private final GraphvizPanel graphvizPanel;
     private final DetailPanel detailTab;
+    private final ToolWindow toolWindow;
 
-    public SqlJoiningGraphToolWindow(Project project) {
+    public SqlJoiningGraphToolWindow(Project project, ToolWindow toolWindow) {
         this.project = project;
+        this.toolWindow = toolWindow;
 
         settingsTab = new GraphvizPropertyPanel(project);
         graphvizPanel = new GraphvizPanel(project);
@@ -34,6 +37,8 @@ public class SqlJoiningGraphToolWindow extends JBTabbedPane implements Printer {
 
     @Override
     public void printJoinEntries(Collection<JoinEntry> joinEntries) {
-        SwingUtilities.invokeLater(() -> setSelectedComponent(graphvizPanel));
+        ApplicationManager.getApplication().invokeLater(() -> {
+            toolWindow.show(() -> setSelectedComponent(graphvizPanel));
+        });
     }
 }

@@ -3,6 +3,7 @@ package com.dominicyyds.sqljoininggraph.ui;
 import com.dominicyyds.sqljoininggraph.entity.JoinEntry;
 import com.dominicyyds.sqljoininggraph.service.OutputService;
 import com.dominicyyds.sqljoininggraph.service.Printer;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBPanel;
@@ -18,7 +19,6 @@ import guru.nidi.graphviz.engine.Graphviz;
 import guru.nidi.graphviz.model.MutableGraph;
 import guru.nidi.graphviz.model.MutableNode;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
@@ -96,7 +96,7 @@ public class GraphvizPanel extends JBPanel<DetailPanel> implements Printer {
                 .notValidating()
                 .render(Format.SVG)
                 .toImage();
-        SwingUtilities.invokeLater(() -> {
+        ApplicationManager.getApplication().invokeLater(() -> {
             clear();
             JBScrollPane scrollPane = new JBScrollPane(new JBLabel(new JBImageIcon(image)));
             add(scrollPane, BorderLayout.CENTER);
