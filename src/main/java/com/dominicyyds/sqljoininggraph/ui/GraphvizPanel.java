@@ -35,7 +35,7 @@ public class GraphvizPanel extends JBPanel<DetailPanel> implements Printer {
     private final Project project;
 
     private static final String fontname = "Microsoft YaHei UI";
-    private static final JBLabel NOT_THING = new JBLabel("Nothing to show yet");
+    private static final JBLabel NOT_THING = new JBLabel("Nothing to show yet", JBLabel.CENTER);
 
     public GraphvizPanel(Project project) {
         this.project = project;
