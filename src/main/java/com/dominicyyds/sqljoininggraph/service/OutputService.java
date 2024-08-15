@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-@Service(Service.Level.PROJECT)
+@Service
 public class OutputService implements Printer {
 
     private final Project project;
