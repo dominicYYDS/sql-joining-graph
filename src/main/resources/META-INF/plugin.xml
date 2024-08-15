@@ -11,10 +11,9 @@
 
         <h4>Usage</h4>
         <ol>
-            <li><strong>Config</strong> the output svg file location in the 'sql-joining-graph' tool window at right side.</li>
             <li><strong>Right click</strong> at your source file or directory where contains SQL STRING CONSTANTS<br/>
                 and <strong>Select 'Generate sql joining graph'</strong>.</li>
-            <li>A svg file illustrating column connections would be generated at the location you choosed.</li>
+            <li>An image illustrating column connections would be generated in the toolwindow named 'sql-joining-graph'.</li>
         </ol>
 
         <h4>Limitation</h4>
@@ -25,6 +24,12 @@
 
     <change-notes><![CDATA[
         <ul>
+            <li>
+                <strong>1.1.0</strong>
+                <ul>
+                    <li>showing image in toolwindow instead.</li>
+                </ul>
+            </li>
             <li>
                 <strong>1.0.0</strong>
                 <ul>
