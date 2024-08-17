@@ -19,7 +19,7 @@ public class SqlJoiningGraphToolWindow extends JBTabbedPane implements Printer {
     private final Project project;
 
     private final GraphvizPropertyPanel settingsTab;
-    private final GraphvizPanel graphvizPanel;
+    private final GraphPanel graphPanel;
     private final DetailPanel detailTab;
     private final ToolWindow toolWindow;
 
@@ -28,12 +28,12 @@ public class SqlJoiningGraphToolWindow extends JBTabbedPane implements Printer {
         this.toolWindow = toolWindow;
 
         settingsTab = new GraphvizPropertyPanel(project);
-        graphvizPanel = new GraphvizPanel(project);
+        graphPanel = new GraphPanel(project);
         detailTab = new DetailPanel(project);
 
 //        insertTab("Settings", null, settingsTab, null, 0);
-        insertTab("Image", null, graphvizPanel, null, 0);
-//        insertTab("Detail", null, detailTab, null, 2);
+        insertTab("Graph", null, graphPanel, null, 0);
+        insertTab("Detail", null, detailTab, null, 1);
 
         project.getService(OutputService.class).registerPrinter(this);
     }
@@ -41,7 +41,7 @@ public class SqlJoiningGraphToolWindow extends JBTabbedPane implements Printer {
     @Override
     public void printJoinEntries(Collection<JoinEntry> joinEntries) {
         ApplicationManager.getApplication().invokeLater(() -> {
-            toolWindow.show(() -> setSelectedComponent(graphvizPanel));
+            toolWindow.show(() -> setSelectedComponent(graphPanel));
         });
     }
 }
