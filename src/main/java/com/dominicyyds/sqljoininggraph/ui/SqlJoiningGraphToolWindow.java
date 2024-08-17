@@ -13,6 +13,9 @@ import java.util.Collection;
 
 public class SqlJoiningGraphToolWindow extends JBTabbedPane implements Printer {
 
+
+    public static final String ID = "sql-joining-graph";
+
     private final Project project;
 
     private final GraphvizPropertyPanel settingsTab;
