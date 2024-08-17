@@ -1,11 +1,9 @@
 # SqlJoiningGraph
 
-## Introduce
-
-This is a intelliJ platform plugin scanning sql string in project and generating an image about column connections between tables,
+IntelliJ platform plugin scanning sql string in project and generating an image about column connections between tables,
 base on where and join conditions in sql string.
 
-more on [plugin home page](https://plugins.jetbrains.com/plugin/25080-sqljoininggraph?noRedirect=true).
+More on [plugin home page](https://plugins.jetbrains.com/plugin/25080-sqljoininggraph?noRedirect=true).
 
 ## Thanks to
 
