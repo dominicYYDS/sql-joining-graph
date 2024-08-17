@@ -30,7 +30,7 @@ import static guru.nidi.graphviz.model.Factory.mutNode;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
-public class GraphvizPanel extends JBPanel<DetailPanel> implements Printer {
+public class GraphvizPanel extends JBPanel<GraphvizPanel> implements Printer {
 
     private final Project project;
 

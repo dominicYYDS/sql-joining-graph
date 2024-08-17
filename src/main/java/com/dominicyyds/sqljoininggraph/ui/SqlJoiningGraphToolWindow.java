@@ -33,7 +33,7 @@ public class SqlJoiningGraphToolWindow extends JBTabbedPane implements Printer {
 
 //        insertTab("Settings", null, settingsTab, null, 0);
         insertTab("Image", null, graphvizPanel, null, 0);
-//        insertTab("Detail", null, detailTab, null, 2);
+        insertTab("Detail", null, detailTab, null, 1);
 
         project.getService(OutputService.class).registerPrinter(this);
     }
