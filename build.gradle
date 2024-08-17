@@ -47,7 +47,7 @@ repositories {
 }
 
 group 'com.dominicyyds'
-version '1.1.0-222-241.6'
+version '1.1.1-222-241'
 
 compileJava {
     options.encoding = 'UTF-8'
@@ -79,7 +79,7 @@ intellij {
 }
 patchPluginXml {
     sinceBuild = '222'
-    untilBuild = '241.6'
+    untilBuild = '241.*'
 }
 signPlugin {
     certificateChainFile = providers.environmentVariable("CERTIFICATE_CHAIN").map {s -> new File(s)}.getOrNull()
