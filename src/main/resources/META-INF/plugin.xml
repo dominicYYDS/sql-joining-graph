@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>sql-joining-graph</id>
     <name>SqlJoiningGraph</name>
-    <version>1.1.0-212-221</version>
+    <version>1.1.1-212-221</version>
     <vendor email="dominicyyds@163.com" url="https://sqljoininggraph.dominicyyds.com">dominicyyds</vendor>
 
     <description><![CDATA[
