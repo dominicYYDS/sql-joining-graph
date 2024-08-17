@@ -30,20 +30,20 @@ import static guru.nidi.graphviz.model.Factory.mutNode;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
-public class GraphvizPanel extends JBPanel<DetailPanel> implements Printer {
+public class GraphPanel extends JBPanel<GraphPanel> implements Printer {
 
     private final Project project;
 
-    private static final String fontname = "Microsoft YaHei UI";
-    private static final JBLabel NOT_THING = new JBLabel("Nothing to show yet", JBLabel.CENTER);
+    private static final String FONT_NAME = "Microsoft YaHei UI";
+    private static final JBLabel NOTHING = new JBLabel("nothing to show yet", JBLabel.CENTER);
 
-    public GraphvizPanel(Project project) {
+    public GraphPanel(Project project) {
         this.project = project;
         OutputService outputService = project.getService(OutputService.class);
         outputService.registerPrinter(this);
 
         setLayout(new BorderLayout());
-        add(NOT_THING, BorderLayout.CENTER);
+        add(NOTHING, BorderLayout.CENTER);
     }
 
     private void clear() {
@@ -78,11 +78,11 @@ public class GraphvizPanel extends JBPanel<DetailPanel> implements Printer {
 
         MutableGraph g = mutGraph("tables").setDirected(false)
                 .graphAttrs().add(Rank.dir(Rank.RankDir.LEFT_TO_RIGHT))
-                .graphAttrs().add(Font.name(fontname))
+                .graphAttrs().add(Font.name(FONT_NAME))
                 .graphAttrs().add("overlap", "false")
-                .nodeAttrs().add(Font.name(fontname))
+                .nodeAttrs().add(Font.name(FONT_NAME))
                 .nodeAttrs().add(Shape.RECORD)
-                .linkAttrs().add(Font.name(fontname));
+                .linkAttrs().add(Font.name(FONT_NAME));
         for (JoinEntry join : joins) {
             MutableNode left = nodes.get(join.getTableLeft());
             MutableNode right = nodes.get(join.getTableRight());
