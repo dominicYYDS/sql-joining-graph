@@ -5,6 +5,7 @@ import com.dominicyyds.sqljoininggraph.service.OutputService;
 import com.dominicyyds.sqljoininggraph.service.Printer;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBPanel;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.table.JBTable;
@@ -16,7 +17,8 @@ import java.util.Comparator;
 
 public class DetailPanel extends JBPanel<DetailPanel> implements Printer {
 
-    private static final String[] colNames = {"Table 1", "Column 1", "Table 2", "Column 2"};
+    private static final String[] COLUMN_NAMES = {"Table 1", "Column 1", "Table 2", "Column 2"};
+    private static final JBLabel NOTHING = new JBLabel("nothing to show yet", JBLabel.CENTER);
 
     private final Project project;
     private JBScrollPane tableScrollPane;
@@ -27,14 +29,15 @@ public class DetailPanel extends JBPanel<DetailPanel> implements Printer {
         outputService.registerPrinter(this);
 
         setLayout(new BorderLayout());
+        add(NOTHING, BorderLayout.CENTER);
     }
 
     @Override
     public void printJoinEntries(Collection<JoinEntry> joinEntries) {
-        JBTable table = new JBTable(new DefaultTableModel(convertToTableData(joinEntries), colNames));
+        JBTable table = new JBTable(new DefaultTableModel(convertToTableData(joinEntries), COLUMN_NAMES));
         tableScrollPane = new JBScrollPane(table);
         ToolWindowManager.getInstance(project).invokeLater(() -> {
-            remove(tableScrollPane);
+            removeAll();
             add(tableScrollPane, BorderLayout.CENTER);
             table.setFillsViewportHeight(true);
         });
