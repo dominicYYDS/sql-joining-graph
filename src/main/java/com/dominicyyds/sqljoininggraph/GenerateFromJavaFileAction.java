@@ -4,6 +4,7 @@ import com.dominicyyds.sqljoininggraph.compatibility.NotificationAdapter;
 import com.dominicyyds.sqljoininggraph.computers.PsiJavaFileStringConstComputer;
 import com.dominicyyds.sqljoininggraph.entity.JoinEntry;
 import com.dominicyyds.sqljoininggraph.service.OutputService;
+import com.dominicyyds.sqljoininggraph.ui.SqlJoiningGraphToolWindow;
 import com.dominicyyds.sqljoininggraph.utils.ExtractUtil;
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.notification.NotificationType;
@@ -14,6 +15,7 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.util.PsiUtilCore;
@@ -99,6 +101,7 @@ public class GenerateFromJavaFileAction extends AnAction {
         }
 
         try {
+            ToolWindowManager.getInstance(event.getProject()).getToolWindow(SqlJoiningGraphToolWindow.ID).show();
             //输出到toolwindow
             OutputService outputService = event.getProject().getService(OutputService.class);
             outputService.printJoinEntries(joins);
