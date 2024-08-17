@@ -81,7 +81,10 @@ intellij {
 runIde {
     jvmArgs = ['-Dfile.encoding=UTF-8', '-XX:+IgnoreUnrecognizedVMOptions']
 }
-
+patchPluginXml {
+    sinceBuild = '212'
+    untilBuild = '221.*'
+}
 signPlugin {
     certificateChainFile = providers.environmentVariable("CERTIFICATE_CHAIN").map {s -> new File(s)}.getOrNull()
     privateKeyFile = providers.environmentVariable("PRIVATE_KEY").map {s -> new File(s)}.getOrNull()
