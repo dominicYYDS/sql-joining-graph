@@ -24,18 +24,14 @@
 
     <change-notes><![CDATA[
         <ul>
-            <li>
-                <strong>1.1.0</strong>
-                <ul>
-                    <li>showing image in toolwindow instead.</li>
-                </ul>
-            </li>
-            <li>
-                <strong>1.0.0</strong>
-                <ul>
-                    <li>supporting scanning sql constants in java String field.</li>
-                </ul>
-            </li>
+            <li><strong>1.2.0</strong></li>
+            <li>show middle results in a detail tab.</li>
+            <li><strong>1.1.1</strong></li>
+            <li>fix a bug.</li>
+            <li><strong>1.1.0</strong></li>
+            <li>show image in toolwindow instead.</li>
+            <li><strong>1.0.0</strong></li>
+            <li>support scanning sql constants in java String field.</li>
         </ul>
     ]]>
     </change-notes>
