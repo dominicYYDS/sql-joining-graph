@@ -1,10 +1,7 @@
 package com.dominicyyds.sqljoininggraph.extractors;
 
 import com.dominicyyds.sqljoininggraph.builders.SelectBodyJoinTreeBuilder;
-import com.dominicyyds.sqljoininggraph.entity.JoinEntry;
-import com.dominicyyds.sqljoininggraph.entity.JoinNode;
-import com.dominicyyds.sqljoininggraph.entity.JoinSelect;
-import com.dominicyyds.sqljoininggraph.entity.TableAndColumn;
+import com.dominicyyds.sqljoininggraph.entity.*;
 import com.dominicyyds.sqljoininggraph.resolvers.JoinSelectResolver;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
@@ -21,6 +18,7 @@ public class JoinSelectExtractor implements JoinEntryExtractor<JoinSelect> {
     @Override
     public Set<JoinEntry> extract(JoinSelect select) {
         Set<JoinEntry> result = new TreeSet<>(JoinEntry.COMPARATOR);
+        //解析 列=列
         select.getColEqCols()
                 .stream()
                 .flatMap(on -> {
@@ -32,26 +30,39 @@ public class JoinSelectExtractor implements JoinEntryExtractor<JoinSelect> {
                 })
                 .filter(Objects::nonNull)
                 .forEach(result::add);
+        //解析 列 =（子查询）
         select.getColEqSubs()
                 .stream()
                 .flatMap(eq -> extractColumnEqualsSubSelect(select, eq.getColumn(), eq.getSubSelect()))
                 .filter(Objects::nonNull)
                 .forEach(result::add);
+        // 解析 列in（子查询）
         select.getColInSubs()
                 .stream()
                 .flatMap(in -> extractColumnEqualsSubSelect(select, in.getColumn(), in.getSubSelect()))
                 .filter(Objects::nonNull)
                 .forEach(result::add);
+        //解析 from 子查询
         select.getChildren()
                 .stream()
                 .filter(child -> child instanceof JoinSelect)
                 .map(child -> INSTANCE.extract((JoinSelect) child))
                 .forEach(result::addAll);
+        //解析 union各部分查询
+        select.getChildren()
+                .stream()
+                .filter(child -> child instanceof JoinUnion)
+                .map(child -> JoinUnionExtractor.INSTANCE.extract((JoinUnion) child))
+                .forEach(result::addAll);
         return result;
     }
 
+    /**
+     * 解析 列=(子查询)
+     */
     private static Stream<JoinEntry> extractColumnEqualsSubSelect(JoinSelect currentSelect, Column column, SubSelect subSelect) {
         JoinNode subTree = SelectBodyJoinTreeBuilder.INSTANCE.build(subSelect.getSelectBody());
+        //解析 col = (sub select)
         if (subTree instanceof JoinSelect) {
             JoinSelect mySubSelect = (JoinSelect) subTree;
             Column subSelectColumn = (Column) Optional.ofNullable(mySubSelect)
