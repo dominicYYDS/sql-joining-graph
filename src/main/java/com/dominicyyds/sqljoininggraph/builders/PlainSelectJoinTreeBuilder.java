@@ -103,8 +103,8 @@ public class PlainSelectJoinTreeBuilder implements JoinTreeBuilder<PlainSelect> 
 
                 @Override
                 public void visit(InExpression in) {
-                    //列in子查询
-                    if (in.getLeftExpression() instanceof Column || in.getRightExpression() instanceof SubSelect) {
+                    //列in子查询、列 in (子查询 union 子查询)
+                    if (in.getLeftExpression() instanceof Column && in.getRightExpression() instanceof SubSelect) {
                         currentNode.getColInSubs().add(new ColumnAndSubSelect(
                                 (Column) in.getLeftExpression(),
                                 (SubSelect) in.getRightExpression()));
@@ -117,13 +117,13 @@ public class PlainSelectJoinTreeBuilder implements JoinTreeBuilder<PlainSelect> 
                     if (eq.getLeftExpression() instanceof Column && eq.getRightExpression() instanceof Column) {
                         currentNode.getColEqCols().add(new ColumnAndColumn(eq.getLeftExpression(Column.class), eq.getRightExpression(Column.class)));
                     }
-                    //列=子查询
+                    //列in子查询、列 in (子查询 union 子查询)
                     if (eq.getLeftExpression() instanceof Column && eq.getRightExpression() instanceof SubSelect) {
                         currentNode.getColInSubs().add(new ColumnAndSubSelect(
                                 (Column) eq.getLeftExpression(),
                                 (SubSelect) eq.getRightExpression()));
                     }
-                    //子查询=列
+                    //子查询=列、（子查询 union 子查询）=列
                     if (eq.getLeftExpression() instanceof SubSelect && eq.getRightExpression() instanceof Column) {
                         currentNode.getColInSubs().add(new ColumnAndSubSelect(
                                 (Column) eq.getRightExpression(),
