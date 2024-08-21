@@ -47,7 +47,7 @@ repositories {
 }
 
 group 'com.dominicyyds'
-version '1.2.0-212-221'
+version '1.2.1-212-221'
 
 compileJava {
     options.encoding = 'UTF-8'
