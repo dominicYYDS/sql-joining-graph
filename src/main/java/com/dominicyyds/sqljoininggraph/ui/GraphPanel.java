@@ -3,8 +3,8 @@ package com.dominicyyds.sqljoininggraph.ui;
 import com.dominicyyds.sqljoininggraph.entity.JoinEntry;
 import com.dominicyyds.sqljoininggraph.service.OutputService;
 import com.dominicyyds.sqljoininggraph.service.Printer;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBPanel;
 import com.intellij.ui.components.JBScrollPane;
@@ -19,6 +19,7 @@ import guru.nidi.graphviz.engine.Graphviz;
 import guru.nidi.graphviz.model.MutableGraph;
 import guru.nidi.graphviz.model.MutableNode;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
@@ -36,6 +37,7 @@ public class GraphPanel extends JBPanel<GraphPanel> implements Printer {
 
     private static final String FONT_NAME = "Microsoft YaHei UI";
     private static final JBLabel NOTHING = new JBLabel("nothing to show yet", JBLabel.CENTER);
+    private static JBScrollPane imageScroll;
 
     public GraphPanel(Project project) {
         this.project = project;
@@ -44,10 +46,26 @@ public class GraphPanel extends JBPanel<GraphPanel> implements Printer {
 
         setLayout(new BorderLayout());
         add(NOTHING, BorderLayout.CENTER);
+
+
+        JButton clearBtn = new JButton("Clear");
+        Box northBox = Box.createHorizontalBox();
+        northBox.add(clearBtn);
+        northBox.add(Box.createHorizontalGlue());
+        add(northBox, BorderLayout.NORTH);
+        clearBtn.addActionListener(e -> {
+            ToolWindowManager.getInstance(project).invokeLater(() -> {
+                clearImage();
+                add(NOTHING, BorderLayout.CENTER);
+            });
+        });
     }
 
-    private void clear() {
-        removeAll();
+    private void clearImage() {
+        if (imageScroll != null) {
+            remove(imageScroll);
+            imageScroll = null;
+        }
     }
 
     @Override
@@ -96,10 +114,11 @@ public class GraphPanel extends JBPanel<GraphPanel> implements Printer {
                 .notValidating()
                 .render(Format.SVG)
                 .toImage();
-        ApplicationManager.getApplication().invokeLater(() -> {
-            clear();
-            JBScrollPane scrollPane = new JBScrollPane(new JBLabel(new JBImageIcon(image)));
-            add(scrollPane, BorderLayout.CENTER);
+        ToolWindowManager.getInstance(project).invokeLater(() -> {
+            clearImage();
+            imageScroll = new JBScrollPane(new JBLabel(new JBImageIcon(image)));
+            remove(NOTHING);
+            add(imageScroll, BorderLayout.CENTER);
         });
         Thread.currentThread().setContextClassLoader(origin);
     }

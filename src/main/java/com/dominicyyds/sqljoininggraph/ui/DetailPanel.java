@@ -10,6 +10,7 @@ import com.intellij.ui.components.JBPanel;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.table.JBTable;
 
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.Collection;
@@ -30,14 +31,35 @@ public class DetailPanel extends JBPanel<DetailPanel> implements Printer {
 
         setLayout(new BorderLayout());
         add(NOTHING, BorderLayout.CENTER);
+
+
+        JButton clearBtn = new JButton("Clear");
+        Box northBox = Box.createHorizontalBox();
+        northBox.add(clearBtn);
+        northBox.add(Box.createHorizontalGlue());
+        add(northBox, BorderLayout.NORTH);
+        clearBtn.addActionListener(e -> {
+            ToolWindowManager.getInstance(project).invokeLater(() -> {
+                clearTable();
+                add(NOTHING, BorderLayout.CENTER);
+            });
+        });
+    }
+
+    private void clearTable() {
+        if (tableScrollPane != null) {
+            remove(tableScrollPane);
+            tableScrollPane = null;
+        }
     }
 
     @Override
     public void printJoinEntries(Collection<JoinEntry> joinEntries) {
-        JBTable table = new JBTable(new DefaultTableModel(convertToTableData(joinEntries), COLUMN_NAMES));
-        tableScrollPane = new JBScrollPane(table);
         ToolWindowManager.getInstance(project).invokeLater(() -> {
-            removeAll();
+            clearTable();
+            JBTable table = new JBTable(new DefaultTableModel(convertToTableData(joinEntries), COLUMN_NAMES));
+            tableScrollPane = new JBScrollPane(table);
+            remove(NOTHING);
             add(tableScrollPane, BorderLayout.CENTER);
             table.setFillsViewportHeight(true);
         });
