@@ -29,6 +29,7 @@ public class PsiClassStringConstComputer implements PsiStringConstComputer<PsiCl
                             return Stream.empty();
                         }
                     } catch (Exception ignore) {
+                        //以字段为单位解析，所以需要单独捕获异常
                         return Stream.empty();
                     }
                 })
