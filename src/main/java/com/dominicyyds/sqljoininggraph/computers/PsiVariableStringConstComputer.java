@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PsiVariableStringConstComputer implements PsiStringConstComputer<PsiVariable> {
 
@@ -22,12 +23,16 @@ public class PsiVariableStringConstComputer implements PsiStringConstComputer<Ps
         if (!support(psiVariable)) {
             return List.of();
         }
-        PsiElement initializer = psiVariable.getInitializer();
-        if (initializer == null) {
+        PsiExpression initializer = psiVariable.getInitializer();
+        return computeRight(initializer);
+    }
+
+    public List<String> computeRight(PsiExpression stringExp) {
+        if (stringExp == null) {
             return List.of();
         }
-        if (initializer instanceof PsiLiteralExpressionImpl) {
-            Object value = ((PsiLiteralExpressionImpl) initializer).getValue();
+        if (stringExp instanceof PsiLiteralExpressionImpl) {
+            Object value = ((PsiLiteralExpressionImpl) stringExp).getValue();
 //            log.info("value=" + value);
             if (StringUtils.isBlank(value.toString())) {
                 return List.of();
@@ -35,8 +40,7 @@ public class PsiVariableStringConstComputer implements PsiStringConstComputer<Ps
             return List.of(value.toString());
         }
 //        System.out.println("=============");
-        StringBuilder sb = new StringBuilder();
-        PsiTreeUtil.findChildrenOfAnyType(initializer, PsiLiteralExpressionImpl.class, PsiReferenceExpression.class)
+        String result = PsiTreeUtil.findChildrenOfAnyType(stringExp, PsiLiteralExpressionImpl.class, PsiReferenceExpression.class)
                 .stream()
                 .map(child -> {
                     if (child instanceof PsiLiteralExpressionImpl) {
@@ -49,23 +53,44 @@ public class PsiVariableStringConstComputer implements PsiStringConstComputer<Ps
                 })
 //                .peek(System.out::println)
                 .filter(StringUtils::isNotBlank)
-                .forEach(sb::append);
-        String result = sb.toString();
+                .collect(Collectors.joining());
         return StringUtils.isBlank(result) ? List.of() : List.of(result);
     }
 
+    /**
+     * 判断字段类型是否支持解析sql
+     */
     private boolean support(PsiVariable variable) {
+        return variable != null && isTypeSupport(variable) && variable.getInitializer() != null && isValueSupport(variable.getInitializer());
+    }
+
+    /**
+     * 判断字段类型是否支持
+     */
+    public boolean isTypeSupport(PsiElement variable) {
         //只支持类属性、局部变量
         if (!(variable instanceof PsiField || variable instanceof PsiLocalVariable)) {
             return false;
         }
+        PsiVariable psiVariable = (PsiVariable) variable;
         //只支持String
-        String typeText = variable.getTypeElement().getText();
+        String typeText = psiVariable.getTypeElement().getText();
         if (!strClassName.equals(typeText) && !"String".equals(typeText)) {
             return false;
         }
+        return true;
+    }
+
+    /**
+     * 判断值是否支持
+     * @param expression 等号赋的值
+     */
+    public boolean isValueSupport(PsiExpression expression) {
+        if (expression == null) {
+            return false;
+        }
         //不支持函数表达式，三目运算
-        if (PsiTreeUtil.findChildOfAnyType(variable, PsiMethodCallExpression.class, PsiConditionalExpression.class) != null) {
+        if (PsiTreeUtil.findChildOfAnyType(expression, PsiMethodCallExpression.class, PsiConditionalExpression.class) != null) {
             return false;
         }
         //TODO 如果有引用且引用解析后不支持也不行

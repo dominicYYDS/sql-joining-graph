@@ -1,8 +1,6 @@
 package com.dominicyyds.sqljoininggraph.computers;
 
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiField;
-import com.intellij.psi.PsiLocalVariable;
+import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,11 +14,20 @@ public class PsiClassStringConstComputer implements PsiStringConstComputer<PsiCl
 
     @Override
     public @NotNull List<String> compute(PsiClass psiClass) {
-        return PsiTreeUtil.findChildrenOfAnyType(psiClass, PsiField.class, PsiLocalVariable.class)
+        return PsiTreeUtil.findChildrenOfAnyType(psiClass, PsiField.class, PsiLocalVariable.class, PsiAssignmentExpression.class)
                 .stream()
                 .flatMap(field -> {
                     try {
-                        return PsiVariableStringConstComputer.INSTANCE.compute(field).stream();
+                        if (field instanceof PsiField || field instanceof PsiLocalVariable) {
+                            //String sql = "123123"
+                            return PsiVariableStringConstComputer.INSTANCE.compute((PsiVariable) field).stream();
+                        } else if (field instanceof PsiAssignmentExpression) {
+                            //String sql;
+                            //sql = "123123";
+                            return PsiAssignmentSqlConstComputer.INSTANCE.compute((PsiAssignmentExpression) field).stream();
+                        } else {
+                            return Stream.empty();
+                        }
                     } catch (Exception ignore) {
                         return Stream.empty();
                     }
