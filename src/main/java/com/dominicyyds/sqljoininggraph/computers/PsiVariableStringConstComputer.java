@@ -14,8 +14,6 @@ public class PsiVariableStringConstComputer implements PsiStringConstComputer<Ps
 
     private static final Logger log = Logger.getInstance(PsiVariableStringConstComputer.class);
 
-    private static final String strClassName = String.class.getCanonicalName();
-
     public static final PsiVariableStringConstComputer INSTANCE = new PsiVariableStringConstComputer();
 
     @Override
@@ -65,17 +63,11 @@ public class PsiVariableStringConstComputer implements PsiStringConstComputer<Ps
     }
 
     /**
-     * 判断字段类型是否支持
+     * 判断字段类型是否支持解析为字符串
      */
     public boolean isTypeSupport(PsiElement variable) {
         //只支持类属性、局部变量
         if (!(variable instanceof PsiField || variable instanceof PsiLocalVariable)) {
-            return false;
-        }
-        PsiVariable psiVariable = (PsiVariable) variable;
-        //只支持String
-        String typeText = psiVariable.getTypeElement().getText();
-        if (!strClassName.equals(typeText) && !"String".equals(typeText)) {
             return false;
         }
         return true;

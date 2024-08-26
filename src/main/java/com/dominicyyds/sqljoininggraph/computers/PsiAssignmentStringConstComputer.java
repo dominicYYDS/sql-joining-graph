@@ -6,9 +6,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class PsiAssignmentSqlConstComputer implements PsiStringConstComputer<PsiAssignmentExpression> {
+public class PsiAssignmentStringConstComputer implements PsiStringConstComputer<PsiAssignmentExpression> {
 
-    public static final PsiAssignmentSqlConstComputer INSTANCE = new PsiAssignmentSqlConstComputer();
+    public static final PsiAssignmentStringConstComputer INSTANCE = new PsiAssignmentStringConstComputer();
 
     @Override
     public @NotNull List<String> compute(PsiAssignmentExpression psiAssignment) {
