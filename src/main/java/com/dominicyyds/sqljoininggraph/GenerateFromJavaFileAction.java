@@ -122,6 +122,8 @@ public class GenerateFromJavaFileAction extends AnAction {
         } catch (JSQLParserException e) {
 //            e.printStackTrace();
 //           log.info(String.format("解析sql失败[%s]\n", e.getMessage()));
+        } catch (Exception e) {
+            log.error(e.getLocalizedMessage(), e);
         }
         return new TreeSet<>(JoinEntry.COMPARATOR);
     }
