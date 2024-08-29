@@ -3,6 +3,7 @@ package com.dominicyyds.sqljoininggraph.ui;
 import com.dominicyyds.sqljoininggraph.entity.JoinEntry;
 import com.dominicyyds.sqljoininggraph.service.OutputService;
 import com.dominicyyds.sqljoininggraph.service.Printer;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.components.JBLabel;
@@ -39,7 +40,7 @@ public class DetailPanel extends JBPanel<DetailPanel> implements Printer {
         northBox.add(Box.createHorizontalGlue());
         add(northBox, BorderLayout.NORTH);
         clearBtn.addActionListener(e -> {
-            ToolWindowManager.getInstance(project).invokeLater(() -> {
+            ApplicationManager.getApplication().invokeLater(() -> {
                 clearTable();
                 add(NOTHING, BorderLayout.CENTER);
             });

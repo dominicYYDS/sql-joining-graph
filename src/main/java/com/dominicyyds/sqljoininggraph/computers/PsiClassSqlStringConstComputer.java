@@ -11,7 +11,6 @@ import java.util.stream.Stream;
 public class PsiClassSqlStringConstComputer implements PsiStringConstComputer<PsiClass> {
 
     public static final PsiClassSqlStringConstComputer INSTANCE = new PsiClassSqlStringConstComputer();
-    private static final String STRING_CLASS_NAME = String.class.getCanonicalName();
 
     @Override
     public @NotNull List<String> compute(PsiClass psiClass) {
@@ -21,7 +20,7 @@ public class PsiClassSqlStringConstComputer implements PsiStringConstComputer<Ps
                     try {
                         if (field instanceof PsiField || field instanceof PsiLocalVariable) {
                             //String sql = "123123"
-                            if (isTypeSupport((PsiVariable) field)) {
+                            if (isString(field)) {
                                 return PsiVariableStringConstComputer.INSTANCE.compute((PsiVariable) field).stream();
                             } else {
                                 return Stream.empty();
@@ -37,7 +36,7 @@ public class PsiClassSqlStringConstComputer implements PsiStringConstComputer<Ps
                                 return Stream.empty();
                             }
                             PsiReferenceExpression typeRefExp = (PsiReferenceExpression) psiAssignment.getLExpression();
-                            if (!isTypeSupport(typeRefExp.resolve())) {
+                            if (!isString(typeRefExp.resolve())) {
                                 return Stream.empty();
                             }
                             return PsiAssignmentStringConstComputer.INSTANCE.compute((PsiAssignmentExpression) field).stream();
@@ -55,17 +54,15 @@ public class PsiClassSqlStringConstComputer implements PsiStringConstComputer<Ps
     /**
      * 判断字段是否支持解析为sql string
      */
-    private boolean isTypeSupport(PsiElement psiElement) {
+    private boolean isString(PsiElement psiElement) {
         //只支持类属性、局部变量
         if (!(psiElement instanceof PsiField || psiElement instanceof PsiLocalVariable)) {
             return false;
         }
         PsiVariable variable = (PsiVariable) psiElement;
         //只支持String，如果只需要解析为string其实基本类型也可以，但是这里只要sql，所以只能string
-        String typeText = variable.getTypeElement().getText();
-        if (!STRING_CLASS_NAME.equals(typeText) && !"String".equals(typeText)) {
-            return false;
-        }
-        return true;
+        PsiManager psiManager = PsiManager.getInstance(variable.getProject());
+        PsiType stringType = PsiType.getJavaLangString(psiManager, variable.getResolveScope());
+        return stringType.isAssignableFrom(variable.getType());
     }
 }

@@ -3,6 +3,7 @@ package com.dominicyyds.sqljoininggraph.ui;
 import com.dominicyyds.sqljoininggraph.entity.JoinEntry;
 import com.dominicyyds.sqljoininggraph.service.OutputService;
 import com.dominicyyds.sqljoininggraph.service.Printer;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.components.JBLabel;
@@ -114,7 +115,7 @@ public class GraphPanel extends JBPanel<GraphPanel> implements Printer {
                 .notValidating()
                 .render(Format.SVG)
                 .toImage();
-        ToolWindowManager.getInstance(project).invokeLater(() -> {
+        ApplicationManager.getApplication().invokeLater(() -> {
             clearImage();
             imageScroll = new JBScrollPane(new JBLabel(new JBImageIcon(image)));
             remove(NOTHING);
