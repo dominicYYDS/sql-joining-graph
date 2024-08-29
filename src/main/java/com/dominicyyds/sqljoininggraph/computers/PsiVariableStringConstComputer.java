@@ -8,12 +8,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PsiVariableStringConstComputer implements PsiStringConstComputer<PsiVariable> {
 
     private static final Logger log = Logger.getInstance(PsiVariableStringConstComputer.class);
-
-    private static final String strClassName = String.class.getCanonicalName();
 
     public static final PsiVariableStringConstComputer INSTANCE = new PsiVariableStringConstComputer();
 
@@ -22,12 +21,16 @@ public class PsiVariableStringConstComputer implements PsiStringConstComputer<Ps
         if (!support(psiVariable)) {
             return List.of();
         }
-        PsiElement initializer = psiVariable.getInitializer();
-        if (initializer == null) {
+        PsiExpression initializer = psiVariable.getInitializer();
+        return computeRight(initializer);
+    }
+
+    public List<String> computeRight(PsiExpression stringExp) {
+        if (stringExp == null) {
             return List.of();
         }
-        if (initializer instanceof PsiLiteralExpressionImpl) {
-            Object value = ((PsiLiteralExpressionImpl) initializer).getValue();
+        if (stringExp instanceof PsiLiteralExpressionImpl) {
+            Object value = ((PsiLiteralExpressionImpl) stringExp).getValue();
 //            log.info("value=" + value);
             if (StringUtils.isBlank(value.toString())) {
                 return List.of();
@@ -35,13 +38,18 @@ public class PsiVariableStringConstComputer implements PsiStringConstComputer<Ps
             return List.of(value.toString());
         }
 //        System.out.println("=============");
-        StringBuilder sb = new StringBuilder();
-        PsiTreeUtil.findChildrenOfAnyType(initializer, PsiLiteralExpressionImpl.class, PsiReferenceExpression.class)
+        String result = PsiTreeUtil.findChildrenOfAnyType(stringExp, PsiLiteralExpressionImpl.class, PsiReferenceExpression.class)
                 .stream()
                 .map(child -> {
                     if (child instanceof PsiLiteralExpressionImpl) {
                         return ((PsiLiteralExpressionImpl) child).getValue().toString();
                     } else if (child instanceof PsiReferenceExpression) {
+                        PsiReferenceExpression ref = (PsiReferenceExpression) child;
+                        PsiElement resolved = ref.resolve();
+                        //如果是数字，直接返回0字符串，加速
+                        if ((resolved instanceof PsiField || resolved instanceof PsiLocalVariable) && isNumber((PsiVariable) resolved)) {
+                            return "0";
+                        }
                         return PsiReferenceStringConstComputer.INSTANCE.computeFirst((PsiReferenceExpression) child);
                     } else {
                         return null;
@@ -49,26 +57,50 @@ public class PsiVariableStringConstComputer implements PsiStringConstComputer<Ps
                 })
 //                .peek(System.out::println)
                 .filter(StringUtils::isNotBlank)
-                .forEach(sb::append);
-        String result = sb.toString();
+                .collect(Collectors.joining());
         return StringUtils.isBlank(result) ? List.of() : List.of(result);
     }
 
+    /**
+     * 判断字段类型是否支持解析sql
+     */
     private boolean support(PsiVariable variable) {
+        return variable != null && isTypeSupport(variable) && variable.getInitializer() != null && isValueSupport(variable.getInitializer());
+    }
+
+    /**
+     * 判断字段类型是否支持解析为字符串
+     */
+    public boolean isTypeSupport(PsiElement variable) {
         //只支持类属性、局部变量
         if (!(variable instanceof PsiField || variable instanceof PsiLocalVariable)) {
             return false;
         }
-        //只支持String
-        String typeText = variable.getTypeElement().getText();
-        if (!strClassName.equals(typeText) && !"String".equals(typeText)) {
+        return true;
+    }
+
+    /**
+     * 判断值是否支持
+     * @param expression 等号赋的值
+     */
+    public boolean isValueSupport(PsiExpression expression) {
+        if (expression == null) {
             return false;
         }
         //不支持函数表达式，三目运算
-        if (PsiTreeUtil.findChildOfAnyType(variable, PsiMethodCallExpression.class, PsiConditionalExpression.class) != null) {
+        if (PsiTreeUtil.findChildOfAnyType(expression, PsiMethodCallExpression.class, PsiConditionalExpression.class) != null) {
             return false;
         }
         //TODO 如果有引用且引用解析后不支持也不行
         return true;
+    }
+
+
+    private boolean isNumber(PsiVariable psiVariable) {
+        if (psiVariable == null || psiVariable.getType() == null) {
+            return false;
+        }
+        PsiType numberType = PsiType.getTypeByName(Number.class.getCanonicalName(), psiVariable.getProject(), psiVariable.getResolveScope());
+        return numberType.isAssignableFrom(psiVariable.getType());
     }
 }
