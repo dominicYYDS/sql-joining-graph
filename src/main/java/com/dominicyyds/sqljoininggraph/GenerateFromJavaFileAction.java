@@ -12,7 +12,11 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindowManager;
@@ -75,40 +79,58 @@ public class GenerateFromJavaFileAction extends AnAction {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent event) {
-        VirtualFile fileSelected = event.getData(CommonDataKeys.VIRTUAL_FILE);
-        if (fileSelected == null) {
-            log.info("没选中文件");
-            return;
-        }
+        new Task.Backgroundable(event.getProject(), "Reading sql for graphing", true) {
+            @Override
+            public void run(@NotNull ProgressIndicator progressIndicator) {
 
-        Set<JoinEntry> joins = new TreeSet<>(JoinEntry.COMPARATOR);
-        VfsUtilCore.iterateChildrenRecursively(fileSelected, f -> true, fileOrDir -> {
-            if (fileOrDir.isDirectory() || !(fileOrDir.getFileType() instanceof JavaFileType)) {
-                return true;
+                VirtualFile fileSelected = event.getData(CommonDataKeys.VIRTUAL_FILE);
+                if (fileSelected == null) {
+                    log.info("没选中文件");
+                    return;
+                }
+
+                Set<JoinEntry> joins = new TreeSet<>(JoinEntry.COMPARATOR);
+                ReadAction.run(() -> {
+                    VfsUtilCore.iterateChildrenRecursively(fileSelected, f -> true, fileOrDir -> {
+                        if (fileOrDir.isDirectory() || !(fileOrDir.getFileType() instanceof JavaFileType)) {
+                            return true;
+                        }
+                        log.info(String.format("处理[%s]\n", fileOrDir.getPath()));
+                        PsiFile psiFile = PsiUtilCore.getPsiFile(event.getProject(), fileOrDir);
+                        if (psiFile instanceof PsiJavaFile) {
+                            List<String> sqls = PsiJavaFileStringConstComputer.INSTANCE.compute((PsiJavaFile) psiFile);
+                            sqls.stream().map(GenerateFromJavaFileAction.this::extract).forEach(joins::addAll);
+                        }
+                        return true;
+                    });
+                });
+
+                if (joins.isEmpty()) {
+                    NotificationAdapter.getInstance(event.getProject()).notify(NOTIFICATION_TITLE, "sorry, no column connection detected or sql grammar not support for now.", NotificationType.WARNING);
+                    return;
+                }
+
+                try {
+                    ApplicationManager.getApplication().invokeLater(() -> {
+                        ToolWindowManager.getInstance(event.getProject()).getToolWindow(SqlJoiningGraphToolWindow.ID).show();
+                        new Task.Backgroundable(event.getProject(), "Generating sql graph", true) {
+                            @Override
+                            public void run(@NotNull ProgressIndicator progressIndicator) {
+                                //输出到toolwindow
+                                OutputService outputService = event.getProject().getService(OutputService.class);
+                                outputService.printJoinEntries(joins);
+                            }
+                        }.setCancelText("Stop Generating Sql Graph")
+                                .queue();
+                    });
+                } catch (Exception e) {
+                    NotificationAdapter.getInstance(event.getProject()).notify(NOTIFICATION_TITLE, String.format("sorry, something error occurs: %s", e.getLocalizedMessage()), NotificationType.ERROR);
+                    throw new RuntimeException(e);
+                }
             }
-            log.info(String.format("处理[%s]\n", fileOrDir.getPath()));
-            PsiFile psiFile = PsiUtilCore.getPsiFile(event.getProject(), fileOrDir);
-            if (psiFile instanceof PsiJavaFile) {
-                List<String> sqls = PsiJavaFileStringConstComputer.INSTANCE.compute((PsiJavaFile) psiFile);
-                sqls.stream().map(this::extract).forEach(joins::addAll);
-            }
-            return true;
-        });
-
-        if (joins.isEmpty()) {
-            NotificationAdapter.getInstance(event.getProject()).notify(NOTIFICATION_TITLE, "sorry, no column connection detected or sql grammar not support for now.", NotificationType.WARNING);
-            return;
         }
-
-        try {
-            ToolWindowManager.getInstance(event.getProject()).getToolWindow(SqlJoiningGraphToolWindow.ID).show();
-            //输出到toolwindow
-            OutputService outputService = event.getProject().getService(OutputService.class);
-            outputService.printJoinEntries(joins);
-        } catch (Exception e) {
-            NotificationAdapter.getInstance(event.getProject()).notify(NOTIFICATION_TITLE, String.format("sorry, something error occurs: %s", e.getLocalizedMessage()), NotificationType.ERROR);
-            throw new RuntimeException(e);
-        }
+                .setCancelText("Stop Generating Sql Graph")
+                .queue();
     }
 
     private Set<JoinEntry> extract(String sql) {
@@ -122,6 +144,8 @@ public class GenerateFromJavaFileAction extends AnAction {
         } catch (JSQLParserException e) {
 //            e.printStackTrace();
 //           log.info(String.format("解析sql失败[%s]\n", e.getMessage()));
+        } catch (Exception e) {
+            log.error(e.getLocalizedMessage(), e);
         }
         return new TreeSet<>(JoinEntry.COMPARATOR);
     }

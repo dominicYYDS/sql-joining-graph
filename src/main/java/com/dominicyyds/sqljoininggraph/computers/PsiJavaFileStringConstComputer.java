@@ -17,7 +17,7 @@ public class PsiJavaFileStringConstComputer implements PsiStringConstComputer<Ps
         return Arrays.stream(psiJavaFile.getClasses())
                 .flatMap(psiClass -> {
                     try {
-                        return PsiClassStringConstComputer.INSTANCE.compute(psiClass).stream();
+                        return PsiClassSqlStringConstComputer.INSTANCE.compute(psiClass).stream();
                     } catch (Exception ignore) {
                         return Stream.empty();
                     }
