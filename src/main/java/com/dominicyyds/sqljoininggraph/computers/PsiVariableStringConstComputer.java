@@ -44,6 +44,12 @@ public class PsiVariableStringConstComputer implements PsiStringConstComputer<Ps
                     if (child instanceof PsiLiteralExpressionImpl) {
                         return ((PsiLiteralExpressionImpl) child).getValue().toString();
                     } else if (child instanceof PsiReferenceExpression) {
+                        PsiReferenceExpression ref = (PsiReferenceExpression) child;
+                        PsiElement resolved = ref.resolve();
+                        //如果是数字，直接返回0字符串，加速
+                        if ((resolved instanceof PsiField || resolved instanceof PsiLocalVariable) && isNumber((PsiVariable) resolved)) {
+                            return "0";
+                        }
                         return PsiReferenceStringConstComputer.INSTANCE.computeFirst((PsiReferenceExpression) child);
                     } else {
                         return null;
@@ -87,5 +93,14 @@ public class PsiVariableStringConstComputer implements PsiStringConstComputer<Ps
         }
         //TODO 如果有引用且引用解析后不支持也不行
         return true;
+    }
+
+
+    private boolean isNumber(PsiVariable psiVariable) {
+        if (psiVariable == null || psiVariable.getType() == null) {
+            return false;
+        }
+        PsiType numberType = PsiType.getTypeByName(Number.class.getCanonicalName(), psiVariable.getProject(), psiVariable.getResolveScope());
+        return numberType.isAssignableFrom(psiVariable.getType());
     }
 }
