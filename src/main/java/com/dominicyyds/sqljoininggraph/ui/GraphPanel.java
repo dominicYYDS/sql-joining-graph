@@ -1,5 +1,6 @@
 package com.dominicyyds.sqljoininggraph.ui;
 
+import com.dominicyyds.sqljoininggraph.constants.MyConstants;
 import com.dominicyyds.sqljoininggraph.entity.JoinEntry;
 import com.dominicyyds.sqljoininggraph.service.OutputService;
 import com.dominicyyds.sqljoininggraph.service.Printer;
@@ -17,6 +18,7 @@ import guru.nidi.graphviz.attribute.Shape;
 import guru.nidi.graphviz.engine.Engine;
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
+import guru.nidi.graphviz.engine.GraphvizV8Engine;
 import guru.nidi.graphviz.model.MutableGraph;
 import guru.nidi.graphviz.model.MutableNode;
 
@@ -110,17 +112,26 @@ public class GraphPanel extends JBPanel<GraphPanel> implements Printer {
         g.add(nodes.values().toArray(new MutableNode[0]));
         ClassLoader origin = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(Graphviz.class.getClassLoader());
-        BufferedImage image = Graphviz.fromGraph(g)
-                .engine(Engine.DOT)
-                .notValidating()
-                .render(Format.SVG)
-                .toImage();
-        ApplicationManager.getApplication().invokeLater(() -> {
-            clearImage();
-            imageScroll = new JBScrollPane(new JBLabel(new JBImageIcon(image)));
-            remove(NOTHING);
-            add(imageScroll, BorderLayout.CENTER);
-        });
-        Thread.currentThread().setContextClassLoader(origin);
+        try {
+            Graphviz.useEngine(new GraphvizV8Engine(MyConstants.getPluginLibDir().toString()));
+            BufferedImage image = Graphviz.fromGraph(g)
+                    .engine(Engine.DOT)
+                    .notValidating()
+                    .render(Format.SVG)
+                    .toImage();
+            ApplicationManager.getApplication().invokeLater(() -> {
+                clearImage();
+                imageScroll = new JBScrollPane(new JBLabel(new JBImageIcon(image)));
+                remove(NOTHING);
+                add(imageScroll, BorderLayout.CENTER);
+            });
+        } finally {
+            try {
+                Graphviz.releaseEngine();
+            } finally {
+                Thread.currentThread().setContextClassLoader(origin);
+            }
+        }
+
     }
 }
