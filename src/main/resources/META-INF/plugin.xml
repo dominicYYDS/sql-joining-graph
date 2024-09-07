@@ -20,6 +20,12 @@
         <ul>
             <li>Only scanning java String field for now, other format coming soon...</li>
         </ul>
+
+        <h4>Trouble Shooting</h4>
+        <ul>
+            <li>If any unknown error occurs, please try to install Graphviz program on your system locally, this may solve the problem.</li>
+            <li>You can download Graphviz from their <a href='https://graphviz.org/download/'>official web side</a>.</li>
+        </ul>
     ]]></description>
 
     <change-notes><![CDATA[
