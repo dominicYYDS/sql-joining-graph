@@ -57,14 +57,31 @@ compileJava {
 
 dependencies {
     implementation 'com.github.jsqlparser:jsqlparser:4.6'
+
+//    implementation 'guru.nidi:graphviz-java:0.18.1'
+//    implementation 'org.graalvm.js:js:20.0.0'
+
     implementation 'guru.nidi:graphviz-java-all-j2v8:0.18.1'
-//    implementation 'com.eclipsesource.j2v8:j2v8_linux_x86_64:4.6.0'
+    //生成svg
+    implementation ('org.apache.xmlgraphics:batik-codec:1.13') {
+//        exclude group: 'org.apache.xmlgraphics', module: 'batik-awt-util'
+//        exclude group: 'org.apache.xmlgraphics', module: 'batik-bridge'
+//        exclude group: 'org.apache.xmlgraphics', module: 'batik-shared-resources'
+//        exclude group: 'org.apache.xmlgraphics', module: 'batik-transcoder'
+//        exclude group: 'org.apache.xmlgraphics', module: 'batik-util'
+        //排除javax.xml.parsers.SAXParserFactory
+        exclude group: 'xml-apis', module: 'xml-apis'
+        exclude group: 'xml-apis', module: 'xml-apis-ext'
+    }
+
     implementation 'ch.qos.logback:logback-classic:1.2.3'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }
-
+configurations.configureEach {
+    resolutionStrategy.sortArtifacts(ResolutionStrategy.SortOrder.DEPENDENCY_FIRST)
+}
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
     localPath = 'E:\\idea\\cache\\ideaIC-2022.1.4'
